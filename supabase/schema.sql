@@ -36,7 +36,23 @@ insert into storage.buckets (id, name, public)
 values ('images', 'images', true)
 on conflict (id) do nothing;
 
--- 4) 예시 카드 3개 (표가 비어 있을 때만 넣음)
+-- 4) 사이트 글자(히어로 제목 등)를 저장하는 표
+--    key 예) hero.title / value = 실제 글자. 비어 있으면 site.config.ts 의 글자가 보임
+create table if not exists public.site_texts (
+  key        text primary key,
+  value      text not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_texts enable row level security;
+
+drop policy if exists "Anyone can read site texts" on public.site_texts;
+create policy "Anyone can read site texts"
+  on public.site_texts for select
+  to anon, authenticated
+  using (true);
+
+-- 5) 예시 카드 3개 (표가 비어 있을 때만 넣음)
 insert into public.items (section, title, description, sort_order)
 select * from (values
   ('features', '첫 번째 기능', '관리자 페이지에서 이 카드를 수정해 보세요.', 1),

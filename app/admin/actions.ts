@@ -3,7 +3,8 @@
 /* 관리자 페이지의 버튼들이 실제로 하는 일 (서버에서 실행됨)
    - login / logout      : 로그인, 로그아웃
    - saveItem            : 카드 추가 또는 수정 (이미지 업로드 포함)
-   - deleteItem          : 카드 삭제 */
+   - deleteItem          : 카드 삭제
+   - saveHeroTexts       : 첫 화면(히어로) 글자 저장 */
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -11,6 +12,7 @@ import { redirect } from "next/navigation";
 import { siteConfig } from "@/site.config";
 import { checkPassword, endAdminSession, isAdmin, startAdminSession } from "@/lib/admin-auth";
 import { getAdminClient, IMAGE_BUCKET } from "@/lib/supabase-admin";
+import { heroTextKeys } from "@/lib/types";
 
 export type ActionState = { ok?: boolean; message?: string };
 
@@ -113,4 +115,42 @@ export async function deleteItem(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/admin");
+}
+
+/* ---------- 히어로 글자 저장 ---------- */
+
+const MAX_TEXT_LENGTH = 500;
+
+export async function saveHeroTexts(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { message: "로그인이 필요합니다. 새로고침 후 다시 로그인하세요." };
+
+  const supabase = getAdminClient();
+  if (!supabase) return { message: "Supabase가 연결되지 않았습니다. .env.local 을 확인하세요." };
+
+  const filled: { key: string; value: string; updated_at: string }[] = [];
+  const emptied: string[] = [];
+  const now = new Date().toISOString();
+
+  for (const key of heroTextKeys) {
+    const value = String(formData.get(key) ?? "").replace(/\r\n/g, "\n").trim();
+    if (value.length > MAX_TEXT_LENGTH) {
+      return { message: `글자는 칸마다 ${MAX_TEXT_LENGTH}자 이하로 입력하세요.` };
+    }
+    if (value) filled.push({ key: `hero.${key}`, value, updated_at: now });
+    else emptied.push(`hero.${key}`);
+  }
+
+  // 글자가 있는 칸은 저장(있으면 덮어쓰기), 비운 칸은 지워서 site.config.ts 기본 글자로 되돌림
+  if (filled.length > 0) {
+    const { error } = await supabase.from("site_texts").upsert(filled);
+    if (error) return { message: `저장 실패: ${error.message}` };
+  }
+  if (emptied.length > 0) {
+    const { error } = await supabase.from("site_texts").delete().in("key", emptied);
+    if (error) return { message: `저장 실패: ${error.message}` };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { ok: true, message: "저장했습니다. 사이트 첫 화면을 새로고침해 보세요." };
 }

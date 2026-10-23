@@ -5,13 +5,15 @@ import { ArrowLeft, EyeOff } from "lucide-react";
 import { siteConfig } from "@/site.config";
 import { isAdmin, isAdminPasswordSet } from "@/lib/admin-auth";
 import { getAdminClient } from "@/lib/supabase-admin";
-import type { Item } from "@/lib/types";
+import { mergeHeroTexts } from "@/lib/data";
+import type { HeroTexts, Item } from "@/lib/types";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { logout } from "./actions";
 import { LoginForm } from "./_components/login-form";
 import { ItemForm } from "./_components/item-form";
 import { DeleteButton } from "./_components/delete-button";
+import { HeroForm } from "./_components/hero-form";
 
 /* 관리자 페이지 (주소: /admin)
    1) 비밀번호가 설정 안 됐으면 → 설정 안내
@@ -75,15 +77,27 @@ export default async function AdminPage(props: PageProps<"/admin">) {
 
   const sections = siteConfig.adminSections;
   const requested = typeof searchParams.section === "string" ? searchParams.section : undefined;
+  const isHero = requested === "hero"; // 「히어로 글자」 탭
   const current = sections.find((s) => s.key === requested) ?? sections[0];
 
-  const { data, error } = await supabase
-    .from("items")
-    .select("*")
-    .eq("section", current.key)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
-  const items = (data ?? []) as Item[];
+  let items: Item[] = [];
+  let heroTexts: HeroTexts | null = null;
+  let error: { message: string } | null = null;
+
+  if (isHero) {
+    const result = await supabase.from("site_texts").select("key, value").like("key", "hero.%");
+    heroTexts = mergeHeroTexts(result.data ?? []);
+    error = result.error;
+  } else {
+    const result = await supabase
+      .from("items")
+      .select("*")
+      .eq("section", current.key)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    items = (result.data ?? []) as Item[];
+    error = result.error;
+  }
 
   return (
     <Container className="py-10">
@@ -106,8 +120,16 @@ export default async function AdminPage(props: PageProps<"/admin">) {
 
       {/* 섹션 탭 (site.config.ts 의 adminSections) */}
       <nav className="mt-8 flex flex-wrap gap-2">
+        <Button asChild size="sm" variant={isHero ? "default" : "outline"}>
+          <Link href="/admin?section=hero">히어로 글자</Link>
+        </Button>
         {sections.map((s) => (
-          <Button key={s.key} asChild size="sm" variant={s.key === current.key ? "default" : "outline"}>
+          <Button
+            key={s.key}
+            asChild
+            size="sm"
+            variant={!isHero && s.key === current.key ? "default" : "outline"}
+          >
             <Link href={`/admin?section=${s.key}`}>{s.label}</Link>
           </Button>
         ))}
@@ -121,6 +143,12 @@ export default async function AdminPage(props: PageProps<"/admin">) {
         </p>
       ) : null}
 
+      {isHero && heroTexts ? (
+        <section className="mt-8 max-w-2xl rounded-xl border p-6">
+          <h2 className="mb-5 text-lg font-semibold">첫 화면(히어로) 글자</h2>
+          <HeroForm texts={heroTexts} />
+        </section>
+      ) : (
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         {/* 새 항목 추가 */}
         <section className="h-fit rounded-xl border p-6">
@@ -168,6 +196,7 @@ export default async function AdminPage(props: PageProps<"/admin">) {
           )}
         </section>
       </div>
+      )}
     </Container>
   );
 }
