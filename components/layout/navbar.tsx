@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 
 import { siteConfig } from "@/site.config";
 import { Container } from "@/components/layout/container";
+import { BouncyText } from "@/components/ui/bouncy-text";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,8 +17,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          {siteConfig.name}
+        <Link href="/" className="font-display text-2xl">
+          <BouncyText text={siteConfig.name} />
         </Link>
 
         {/* 데스크톱 메뉴 */}
