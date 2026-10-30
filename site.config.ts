@@ -150,19 +150,28 @@ export const siteConfig = {
     ],
   },
 
-  /* 실천 보드게임 (03 실천 섹션 안). 칸은 0(출발) ~ 19(도착) 20칸이 뱀처럼 이어집니다.
-     - missions : tile = 칸 번호(1~18)
-     - missions : 멈추면 해 볼 실천 계획
-     - jumps    : 사다리. from 칸에 멈추면 to 칸으로 이동 (위로 가는 사다리 = upText, 아래로 = downText) */
+  /* 실천 레이스 (03 실천 섹션 안). 칸은 0(출발) ~ 19(도착) 20칸이 뱀처럼 이어집니다.
+     주사위 없이, 칸을 눌러 내 캐릭터 말을 지금 하고 있는 실천 계획 칸에 놓습니다.
+     캐릭터가 있는 칸에는 성공·보류·재도전·취소 표시를 붙일 수 있어요.
+     (말 위치와 표시는 이 브라우저에 기억돼서 다음에 와도 그대로예요)
+     - missions : tile = 칸 번호(1~18), text = 그 칸의 실천 계획
+     - jumps    : 사다리 그림 (앞으로 가는 사다리 = upText, 뒤로 돌아가는 사다리 = downText) */
   actionGame: {
     boardTitle: "실천 레이스",
-    hint: "주사위를 굴려 도착까지 가 보세요. 멈춘 칸의 실천 계획을 하나씩 해내요!",
+    hint: "칸을 눌러 내 캐릭터를 지금 하고 있는 실천 계획에 놓아 보세요!",
     startLabel: "출발",
     goalLabel: "도착",
-    rollLabel: "주사위 굴리기",
-    resetLabel: "처음부터",
+    resetLabel: "출발로 돌아가기",
     upText: "2단계 실천 시작!",
-    downText: "아래로 뚝!",
+    downText: "한 번 더 복습!",
+    /* 캐릭터가 있는 칸에 붙일 수 있는 결과 표시 (key 는 바꾸지 말고 label 만 바꾸기) */
+    statusPrompt: "결과 표시:",
+    statuses: [
+      { key: "done", label: "성공" },
+      { key: "hold", label: "보류" },
+      { key: "retry", label: "재도전" },
+      { key: "cancel", label: "취소" },
+    ],
     goalMessage: "도착! 오늘도 해냈어요!",
     missions: [
       { tile: 1, text: "교육 신청하기" },
