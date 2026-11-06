@@ -38,7 +38,7 @@ export function TrophyFountain({ label, className }: { label: string; className?
         {pieces.map((p, i) => (
           <span
             key={i}
-            className={cn("absolute animate-fountain border border-card opacity-0", p.shape, p.color)}
+            className={cn("absolute animate-fountain border border-line opacity-0", p.shape, p.color)}
             style={{ "--dx": p.dx, "--peak": p.peak, "--rot": p.rot, animationDelay: p.delay } as CSSProperties}
           />
         ))}
@@ -46,7 +46,7 @@ export function TrophyFountain({ label, className }: { label: string; className?
 
       {/* 떠오르는 +1 말풍선 */}
       <span className="absolute inset-x-0 top-[6%] flex justify-center">
-        <span className="flex animate-labelpop items-center gap-1.5 whitespace-nowrap rounded-full border-4 border-card bg-orange px-4 py-1.5 font-display text-xl text-card opacity-0 shadow-pop [animation-delay:0.15s]">
+        <span className="flex animate-labelpop items-center gap-1.5 whitespace-nowrap rounded-full border-[2.5px] border-line bg-orange px-4 py-1.5 font-display text-xl text-card opacity-0 shadow-pop [animation-delay:0.15s]">
           <Trophy className="size-5" strokeWidth={2.5} />
           {label}
         </span>

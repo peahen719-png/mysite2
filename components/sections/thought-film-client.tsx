@@ -127,10 +127,10 @@ export function ThoughtFilm({ frames }: { frames: Frame[] }) {
         {/* 필름 통 (데스크톱에서만) */}
         <div
           aria-hidden
-          className="relative z-10 hidden h-64 w-24 shrink-0 -rotate-6 items-center justify-center rounded-[1.5rem] border-4 border-card bg-linear-to-r from-teal via-sky to-primary shadow-pop md:flex"
+          className="relative z-10 hidden h-64 w-24 shrink-0 -rotate-6 items-center justify-center rounded-[1.5rem] border-[2.5px] border-line bg-linear-to-r from-teal via-sky to-primary shadow-pop md:flex"
         >
-          <div className="absolute inset-x-3 -top-3.5 h-4 rounded-t-lg border-4 border-b-0 border-card bg-primary" />
-          <div className="absolute inset-x-3 -bottom-3.5 h-4 rounded-b-lg border-4 border-t-0 border-card bg-primary" />
+          <div className="absolute inset-x-3 -top-3.5 h-4 rounded-t-lg border-4 border-b-0 border-line bg-primary" />
+          <div className="absolute inset-x-3 -bottom-3.5 h-4 rounded-b-lg border-4 border-t-0 border-line bg-primary" />
           {/* 반짝이는 빛 */}
           <div className="absolute inset-y-6 left-3 w-2 rounded-full bg-card/40" />
           <p className="rotate-180 whitespace-pre-line text-center font-display text-xl leading-tight text-card [writing-mode:vertical-rl]">
@@ -206,7 +206,7 @@ export function ThoughtFilm({ frames }: { frames: Frame[] }) {
       {frame && kind ? (
         <div
           key={frame.id}
-          className="mb-4 rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm animate-in fade-in slide-in-from-top-3 duration-300 sm:p-6"
+          className="mb-4 rounded-2xl border-[2.5px] border-line bg-card p-4 shadow-pop-sm animate-in fade-in slide-in-from-top-3 duration-300 sm:p-6"
         >
           <div className="flex items-center gap-3">
             <span className="h-12 w-20 shrink-0 rounded-lg bg-muted/60 p-1">

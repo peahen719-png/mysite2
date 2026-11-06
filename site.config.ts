@@ -11,6 +11,8 @@ import type { Item } from "@/lib/types";
 export const siteConfig = {
   /* 브라우저 탭 제목과 검색 결과에 보이는 정보 */
   name: "해보자",
+  /* 한옥 도서관을 지키는 사모예드 그림 (첫 화면 배경 + 캐릭터). public 폴더 안의 파일 */
+  libraryImage: "/images/hanok-library.jpg",
   title: "해보자 — 나의 첫 웹사이트",
   description: "바이브 코딩으로 만든 나의 웹사이트입니다.",
 

@@ -53,7 +53,7 @@ export async function StepSection({
           <div
             aria-hidden
             className={cn(
-              "flex size-20 shrink-0 -rotate-6 items-center justify-center rounded-2xl border-4 border-card font-display text-4xl text-card shadow-pop",
+              "flex size-20 shrink-0 -rotate-6 items-center justify-center rounded-2xl border-[2.5px] border-line font-display text-4xl text-card shadow-pop",
               badgeColors[index % badgeColors.length],
             )}
           >
@@ -68,7 +68,7 @@ export async function StepSection({
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => {
               const card = (
-                <article className="lift group h-full overflow-hidden rounded-[1.75rem] border-4 border-card bg-card shadow-pop-sm">
+                <article className="lift group h-full overflow-hidden rounded-[1.75rem] border-[2.5px] border-line bg-card shadow-pop-sm">
                   <div className="relative aspect-[4/3] bg-muted">
                     {item.image_url ? (
                       <Image

@@ -46,7 +46,7 @@ function LetterCard({
 }) {
   return (
     <div
-      className="lift flex min-h-[15rem] flex-col rounded-[1.75rem] border-4 border-card bg-card p-5 shadow-pop-sm sm:p-6"
+      className="lift flex min-h-[15rem] flex-col rounded-[1.75rem] border-[2.5px] border-line bg-card p-5 shadow-pop-sm sm:p-6"
       onMouseEnter={() => rotation.setPaused(true)}
       onMouseLeave={() => rotation.setPaused(false)}
       onFocus={() => rotation.setPaused(true)}

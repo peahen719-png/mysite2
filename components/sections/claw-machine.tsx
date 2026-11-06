@@ -30,7 +30,7 @@ function Product({ label, index, className }: { label: string; index: number; cl
   return (
     <span
       className={cn(
-        "relative flex aspect-[3/4] w-full flex-col overflow-hidden rounded-xl border-4 border-card p-1.5 shadow-pop-sm",
+        "relative flex aspect-[3/4] w-full flex-col overflow-hidden rounded-xl border-[2.5px] border-line p-1.5 shadow-pop-sm",
         productLooks[index % productLooks.length],
         className,
       )}
@@ -118,25 +118,25 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
     <div className="relative mt-20">
       {/* 분홍 거리 표지판 제목 — 자판기와 트로피 전체의 가운데 위 */}
       <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative -rotate-1 rounded-2xl border-4 border-card bg-pink px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+        <p className="relative -rotate-1 rounded-2xl border-[2.5px] border-line bg-pink px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
+          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
           {game.title}
         </p>
       </div>
 
-      <div className="relative rounded-[2rem] border-[6px] border-card bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16">
+      <div className="relative rounded-[2rem] border-[3px] border-line bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16">
         <div className="relative grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_17rem]">
           {/* ───────── 성과 자판기 ───────── */}
           <div className="relative mx-auto w-full max-w-xl">
 
-            <div className="rounded-[2rem] border-[6px] border-card bg-red/80 p-3 shadow-pop sm:p-4">
+            <div className="rounded-[2rem] border-[3px] border-line bg-red/80 p-3 shadow-pop sm:p-4">
               {/* 위 간판 (글자 사이를 넓게) */}
               <p className="rounded-2xl bg-foreground/85 px-3 py-3 text-center font-display text-base tracking-[0.35em] text-card sm:text-2xl sm:tracking-[0.5em]">
                 {game.vendingTitle}
               </p>
 
               {/* 진열창 */}
-              <div className="relative mt-3 overflow-hidden rounded-2xl border-4 border-card bg-card/85 p-3 sm:p-4">
+              <div className="relative mt-3 overflow-hidden rounded-2xl border-[2.5px] border-line bg-card/85 p-3 sm:p-4">
                 {/* 유리에 비친 빛줄기 */}
                 <div
                   aria-hidden
@@ -191,18 +191,18 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
                   >
                     <div className="w-1.5 shrink-0 bg-orange transition-[height] duration-[600ms] ease-in-out" style={{ height: rope }} />
                     <div className="relative flex w-full flex-col items-center">
-                      <div className="h-3 w-1/4 rounded-t-md border-2 border-card bg-orange" />
-                      <div className="h-4 w-1/2 rounded-md border-2 border-card bg-orange" />
+                      <div className="h-3 w-1/4 rounded-t-md border-2 border-line bg-orange" />
+                      <div className="h-4 w-1/2 rounded-md border-2 border-line bg-orange" />
                       {/* 집게 팔 2개 (벌렸다 오므림) */}
                       <span
                         className={cn(
-                          "absolute left-[22%] top-[calc(100%-4px)] z-10 h-10 w-2.5 origin-top rounded-full border-2 border-card bg-sky transition-transform duration-300",
+                          "absolute left-[22%] top-[calc(100%-4px)] z-10 h-10 w-2.5 origin-top rounded-full border-2 border-line bg-sky transition-transform duration-300",
                           closed ? "rotate-[-8deg]" : "rotate-[28deg]",
                         )}
                       />
                       <span
                         className={cn(
-                          "absolute right-[22%] top-[calc(100%-4px)] z-10 h-10 w-2.5 origin-top rounded-full border-2 border-card bg-sky transition-transform duration-300",
+                          "absolute right-[22%] top-[calc(100%-4px)] z-10 h-10 w-2.5 origin-top rounded-full border-2 border-line bg-sky transition-transform duration-300",
                           closed ? "rotate-[8deg]" : "rotate-[-28deg]",
                         )}
                       />
@@ -219,7 +219,7 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
 
               {/* 아래: 꺼내는 곳(왼쪽) + 버튼(오른쪽) 한 줄 */}
               <div className="mt-3 flex items-stretch gap-2">
-                <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border-4 border-card bg-foreground/75 px-3 py-2">
+                <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border-[2.5px] border-line bg-foreground/75 px-3 py-2">
                   <span className="shrink-0 font-display text-[10px] tracking-widest text-card/60">{game.trayLabel}</span>
                   {tray !== null ? (
                     <span
@@ -258,15 +258,15 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
             </div>
             {/* 다리 */}
             <div aria-hidden className="flex justify-between px-10">
-              <span className="h-5 w-10 rounded-b-xl border-4 border-t-0 border-card bg-red" />
-              <span className="h-5 w-10 rounded-b-xl border-4 border-t-0 border-card bg-red" />
+              <span className="h-5 w-10 rounded-b-xl border-4 border-t-0 border-line bg-red" />
+              <span className="h-5 w-10 rounded-b-xl border-4 border-t-0 border-line bg-red" />
             </div>
           </div>
 
           {/* ───────── 성과 트로피 ───────── */}
           <div className="mx-auto w-full max-w-xs">
             {/* 트로피 위: 응원하는 캐릭터 (말풍선은 왼쪽) */}
-            <Mascot className="mb-1 justify-center" side="left" tone="sky" messages={game.mascotMessages} />
+            <Mascot className="mb-1 justify-center" side="left" messages={game.mascotMessages} />
             <p className="text-center font-display text-xl text-foreground">
               {game.trophyTitle}{" "}
               <span className="text-primary">
@@ -298,7 +298,7 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
                   <span
                     key={i}
                     className={cn(
-                      "max-w-[7rem] truncate rounded-lg border-2 border-card px-2 py-1.5 font-display text-xs text-foreground shadow-pop-sm animate-in fade-in zoom-in-50 duration-500",
+                      "max-w-[7rem] truncate rounded-lg border-2 border-line px-2 py-1.5 font-display text-xs text-foreground shadow-pop-sm animate-in fade-in zoom-in-50 duration-500",
                       productLooks[i % productLooks.length],
                     )}
                   >
@@ -308,16 +308,16 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
               </div>
 
               {/* 컵 테두리 */}
-              <span aria-hidden className="absolute bottom-[14.25rem] left-1/2 z-20 h-6 w-48 -translate-x-1/2 rounded-full border-4 border-card bg-orange shadow-pop-sm" />
+              <span aria-hidden className="absolute bottom-[14.25rem] left-1/2 z-20 h-6 w-48 -translate-x-1/2 rounded-full border-[2.5px] border-line bg-orange shadow-pop-sm" />
               {/* 컵 */}
-              <div className="absolute bottom-24 left-1/2 z-20 flex h-[8.5rem] w-44 -translate-x-1/2 items-center justify-center overflow-hidden rounded-b-[45%] rounded-t-md border-4 border-card bg-linear-to-b from-orange to-pink shadow-pop">
+              <div className="absolute bottom-24 left-1/2 z-20 flex h-[8.5rem] w-44 -translate-x-1/2 items-center justify-center overflow-hidden rounded-b-[45%] rounded-t-md border-[2.5px] border-line bg-linear-to-b from-orange to-pink shadow-pop">
                 <span aria-hidden className="absolute bottom-3 left-4 top-3 w-3 rounded-full bg-card/40" />
                 <Star aria-hidden className="size-12 fill-card/90 text-card" />
               </div>
               {/* 기둥 + 받침 */}
-              <span aria-hidden className="absolute bottom-14 left-1/2 z-10 h-11 w-7 -translate-x-1/2 border-x-4 border-card bg-orange" />
-              <span aria-hidden className="absolute bottom-12 left-1/2 z-20 h-4 w-20 -translate-x-1/2 rounded-full border-4 border-card bg-pink" />
-              <div className="absolute bottom-0 left-1/2 z-20 flex h-12 w-40 -translate-x-1/2 items-center justify-center rounded-xl border-4 border-card bg-primary shadow-pop">
+              <span aria-hidden className="absolute bottom-14 left-1/2 z-10 h-11 w-7 -translate-x-1/2 border-x-4 border-line bg-orange" />
+              <span aria-hidden className="absolute bottom-12 left-1/2 z-20 h-4 w-20 -translate-x-1/2 rounded-full border-[2.5px] border-line bg-pink" />
+              <div className="absolute bottom-0 left-1/2 z-20 flex h-12 w-40 -translate-x-1/2 items-center justify-center rounded-xl border-[2.5px] border-line bg-primary shadow-pop">
                 <span className="rounded-md bg-card px-3 py-0.5 font-display text-xs tracking-widest text-primary">
                   {game.trophyPlate}
                 </span>

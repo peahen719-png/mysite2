@@ -25,7 +25,7 @@ export function BackToTop({ label }: { label: string }) {
       aria-label={label}
       title={label}
       className={cn(
-        "fixed bottom-5 right-5 z-40 flex size-12 items-center justify-center rounded-full border-4 border-card bg-primary text-primary-foreground shadow-pop transition-all duration-300 hover:-translate-y-1 sm:bottom-8 sm:right-8",
+        "fixed bottom-5 right-5 z-40 flex size-12 items-center justify-center rounded-full border-[2.5px] border-line bg-primary text-primary-foreground shadow-pop transition-all duration-300 hover:-translate-y-1 sm:bottom-8 sm:right-8",
         show ? "scale-100 opacity-100" : "pointer-events-none scale-50 opacity-0",
       )}
     >

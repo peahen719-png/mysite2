@@ -26,14 +26,14 @@ export async function ThoughtFilmBoard() {
     <div id="thoughts" className="relative mt-20 scroll-mt-24">
       {/* 하늘색 거리 표지판 제목 */}
       <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative rotate-1 rounded-2xl border-4 border-card bg-sky px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+        <p className="relative rotate-1 rounded-2xl border-[2.5px] border-line bg-sky px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
+          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
           {thoughts.title}
         </p>
       </div>
 
       {/* 보드 */}
-      <div className="overflow-hidden rounded-[2rem] border-[6px] border-card bg-card/50 px-4 pb-2 pt-14 shadow-pop backdrop-blur sm:px-6">
+      <div className="overflow-hidden rounded-[2rem] border-[3px] border-line bg-card/50 px-4 pb-2 pt-14 shadow-pop backdrop-blur sm:px-6">
         <p className="text-center text-sm text-muted-foreground sm:text-base">{thoughts.description}</p>
 
         <ThoughtFilm frames={frames} />

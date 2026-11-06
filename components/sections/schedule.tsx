@@ -58,7 +58,7 @@ function LongArrow({ side, target, onClick }: { side: "left" | "right"; target: 
       type="button"
       onClick={onClick}
       aria-label={`${target.y}년 ${target.m}월 일정 보기`}
-      className="group w-11 shrink-0 self-stretch rounded-2xl border-4 border-card bg-teal/15 text-foreground shadow-pop-sm transition-colors hover:bg-teal/30 sm:w-16"
+      className="group w-11 shrink-0 self-stretch rounded-2xl border-[2.5px] border-line bg-teal/15 text-foreground shadow-pop-sm transition-colors hover:bg-teal/30 sm:w-16"
     >
       {/* 다이어리가 길어도 화살표가 늘 보이도록 화면 가운데에 붙어 있음 */}
       <span className="sticky top-[45vh] flex flex-col items-center gap-1 py-6">
@@ -197,20 +197,20 @@ export function ScheduleBoard() {
     <div id="schedule" className="relative mt-20 scroll-mt-24">
       {/* 둥실둥실 장식 */}
       <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
-        <div className="absolute -right-4 -top-14 z-10 flex size-14 animate-float items-center justify-center rounded-full border-4 border-card bg-pink text-card shadow-pop">
+        <div className="absolute -right-4 -top-14 z-10 flex size-14 animate-float items-center justify-center rounded-full border-[2.5px] border-line bg-pink text-card shadow-pop">
           <CalendarHeart className="size-7" />
         </div>
-        <div className="absolute -bottom-6 -left-5 z-10 flex size-12 animate-float items-center justify-center rounded-full border-4 border-card bg-sky text-card shadow-pop [animation-delay:-3s]">
+        <div className="absolute -bottom-6 -left-5 z-10 flex size-12 animate-float items-center justify-center rounded-full border-[2.5px] border-line bg-sky text-card shadow-pop [animation-delay:-3s]">
           <Star className="size-6 fill-card" />
         </div>
       </div>
 
       {/* 보드 */}
-      <div className="relative rounded-[2rem] border-[6px] border-card bg-card/50 p-2 pt-12 shadow-pop backdrop-blur sm:p-5 sm:pt-14">
+      <div className="relative rounded-[2rem] border-[3px] border-line bg-card/50 p-2 pt-12 shadow-pop backdrop-blur sm:p-5 sm:pt-14">
         {/* 청록 거리 표지판 제목 */}
         <div className="absolute inset-x-0 -top-8 flex justify-center px-4">
-          <p className="relative -rotate-1 rounded-2xl border-4 border-card bg-teal px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-            <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+          <p className="relative -rotate-1 rounded-2xl border-[2.5px] border-line bg-teal px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
+            <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
             {schedule.boardTitle}
           </p>
         </div>
@@ -234,7 +234,7 @@ export function ScheduleBoard() {
 
           {/* 검색 결과 */}
           {query.trim() ? (
-            <div className="absolute inset-x-0 top-full z-30 mt-2 max-h-80 overflow-auto rounded-2xl border-4 border-card bg-card p-2 shadow-pop">
+            <div className="absolute inset-x-0 top-full z-30 mt-2 max-h-80 overflow-auto rounded-2xl border-[2.5px] border-line bg-card p-2 shadow-pop">
               {results.length === 0 ? (
                 <p className="px-3 py-2 text-sm text-muted-foreground">“{query.trim()}”(이)가 들어간 계획이 없어요.</p>
               ) : (
@@ -266,7 +266,7 @@ export function ScheduleBoard() {
         {draft ? (
           <form
             onSubmit={saveDraft}
-            className="mb-4 grid gap-2 rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm animate-in fade-in slide-in-from-top-2 duration-300 sm:grid-cols-[1fr_auto]"
+            className="mb-4 grid gap-2 rounded-2xl border-[2.5px] border-line bg-card p-4 shadow-pop-sm animate-in fade-in slide-in-from-top-2 duration-300 sm:grid-cols-[1fr_auto]"
           >
             <p className="flex items-center gap-2 font-display text-base text-foreground sm:col-span-2">
               <Pencil className="size-4 text-primary" />
@@ -352,7 +352,7 @@ export function ScheduleBoard() {
           >
             {/* 왼쪽: 달 */}
             <div className="shrink-0 md:w-28">
-              <div className="flex items-center justify-center gap-3 rounded-2xl border-4 border-card bg-linear-to-br from-teal/35 to-sky/20 px-4 py-3 shadow-pop-sm md:sticky md:top-24 md:flex-col md:gap-1 md:py-6">
+              <div className="flex items-center justify-center gap-3 rounded-2xl border-[2.5px] border-line bg-linear-to-br from-teal/35 to-sky/20 px-4 py-3 shadow-pop-sm md:sticky md:top-24 md:flex-col md:gap-1 md:py-6">
                 <span className="font-display text-sm text-foreground/60">{view.y}</span>
                 <span className="font-display text-6xl leading-none text-teal [text-shadow:0_4px_0_var(--card)] md:text-7xl">
                   {view.m}
@@ -363,7 +363,7 @@ export function ScheduleBoard() {
             </div>
 
             {/* 다이어리: 1일 ~ 말일 */}
-            <div className="min-w-0 flex-1 overflow-hidden rounded-2xl border-4 border-card bg-card shadow-pop-sm">
+            <div className="min-w-0 flex-1 overflow-hidden rounded-2xl border-[2.5px] border-line bg-card shadow-pop-sm">
               <div
                 className="grid"
                 style={{

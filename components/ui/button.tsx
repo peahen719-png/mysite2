@@ -13,13 +13,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border-2 border-card bg-primary text-primary-foreground shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
+          "border-2 border-line bg-primary text-primary-foreground shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
         destructive:
-          "border-2 border-card bg-destructive text-white shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
+          "border-2 border-line bg-destructive text-white shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
         outline:
-          "border-2 border-card bg-card text-card-foreground shadow-pop-sm hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
+          "border-2 border-line bg-card text-card-foreground shadow-pop-sm hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
         secondary:
-          "border-2 border-card bg-secondary text-secondary-foreground shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
+          "border-2 border-line bg-secondary text-secondary-foreground shadow-pop-sm hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

@@ -60,7 +60,7 @@ export function Navbar() {
         className={cn(
           "relative mx-auto max-w-6xl overflow-hidden rounded-full border-2 transition-all duration-300",
           scrolled || open
-            ? "border-card bg-card/70 shadow-pop-sm backdrop-blur-xl"
+            ? "border-line bg-card/70 shadow-pop-sm backdrop-blur-xl"
             : "border-transparent bg-transparent",
           open && "rounded-[1.75rem]",
         )}

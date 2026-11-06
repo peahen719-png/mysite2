@@ -65,14 +65,14 @@ export function Celebration({ className }: { className?: string }) {
         <span key={`burst-${bi}`} className="absolute" style={{ left: `${b.x}%`, top: `${b.y}%` }}>
           {/* 가운데 반짝 */}
           <span
-            className="absolute -left-6 -top-6 size-12 animate-firework rounded-full border-4 border-card opacity-0 [--dx:0px] [--dy:0px]"
+            className="absolute -left-6 -top-6 size-12 animate-firework rounded-full border-[2.5px] border-line opacity-0 [--dx:0px] [--dy:0px]"
             style={{ animationDelay: `${b.d}s` }}
           />
           {sparks.map((sp, si) => (
             <span
               key={si}
               className={cn(
-                "absolute -left-2 -top-2 size-4 animate-firework rounded-full border-2 border-card opacity-0",
+                "absolute -left-2 -top-2 size-4 animate-firework rounded-full border-2 border-line opacity-0",
                 sparkColors[(si + bi) % sparkColors.length],
               )}
               style={{ "--dx": sp.dx, "--dy": sp.dy, animationDelay: `${b.d}s` } as CSSProperties}

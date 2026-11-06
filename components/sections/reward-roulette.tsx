@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { Check, Gift, Lock, Pencil, Plus, ShoppingBag, Sparkles, Trash2, type LucideIcon } from "lucide-react";
+import { Check, Gift, Lock, Pencil, Plus, ShoppingBag, Sparkles, Trash2, Trophy, type LucideIcon } from "lucide-react";
 
 import { siteConfig } from "@/site.config";
 import { cn } from "@/lib/utils";
@@ -141,134 +141,132 @@ export function RewardRoulette() {
     <div className="relative mt-20">
       {/* 노랑 거리 표지판 제목 */}
       <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative rotate-1 rounded-2xl border-4 border-card bg-yellow px-6 py-3 text-center font-display text-xl text-foreground shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+        <p className="relative rotate-1 rounded-2xl border-[2.5px] border-line bg-yellow px-6 py-3 text-center font-display text-xl text-foreground shadow-pop sm:px-10 sm:text-3xl">
+          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
           {cfg.boardTitle}
         </p>
       </div>
 
-      <div className="grid items-start gap-8 rounded-[2rem] border-[6px] border-card bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        {/* ───── 룰렛 ───── */}
-        <div className="relative mx-auto flex w-full max-w-sm flex-col items-center">
-          {burst > 0 ? <TrophyFountain key={burst} label={cfg.winLabel} className="-inset-x-10 -top-10" /> : null}
-
-          <div className="relative w-full">
-            {/* 맨 위 바늘 */}
-            <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1">
-              <div className="h-0 w-0 border-x-[14px] border-t-[24px] border-x-transparent border-t-foreground drop-shadow" />
-            </div>
-
-            <svg viewBox={`0 0 ${R * 2} ${R * 2}`} className="w-full drop-shadow-[0_8px_0_color-mix(in_oklab,var(--foreground)_15%,transparent)]" role="img" aria-label={`${cfg.boardTitle}, 칸 ${n}개`}>
-              <g
-                style={{
-                  transform: `rotate(${rotation}deg)`,
-                  transformOrigin: "50% 50%",
-                  transition: spinning ? "transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 1)" : "none",
-                }}
-              >
-                {rewards.map((r, i) => {
-                  const a0 = i * slice;
-                  const a1 = (i + 1) * slice;
-                  const p0 = point(a0, R - 4);
-                  const p1 = point(a1, R - 4);
-                  const large = slice > 180 ? 1 : 0;
-                  const mid = a0 + slice / 2;
-                  const ep = point(mid, R * 0.7); // 그림 (바깥쪽)
-                  const np = point(mid, R * 0.4); // 번호 (안쪽) — 이름은 오른쪽 '보상 목록'에서
-                  const look = catLooks[r.cat] ?? catLooks.do;
-                  return (
-                    <g key={`${r.text}-${i}`}>
-                      <path
-                        d={`M${R},${R} L${p0.x},${p0.y} A${R - 4},${R - 4} 0 ${large} 1 ${p1.x},${p1.y} Z`}
-                        className={cn(look.fill, "stroke-card", result === i && !spinning && "fill-primary/50")}
-                        strokeWidth="3"
-                      />
-                      <text
-                        x={ep.x}
-                        y={ep.y}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        transform={`rotate(${mid} ${ep.x} ${ep.y})`}
-                        className="text-[30px]"
-                      >
-                        {emojiOf(r)}
-                      </text>
-                      <circle cx={np.x} cy={np.y} r="11" className="fill-card" />
-                      <text
-                        x={np.x}
-                        y={np.y}
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        transform={`rotate(${-rotation} ${np.x} ${np.y})`}
-                        className="fill-foreground font-display text-[13px]"
-                      >
-                        {i + 1}
-                      </text>
-                    </g>
-                  );
-                })}
-                <circle cx={R} cy={R} r={R - 4} className="fill-none stroke-card" strokeWidth="8" />
-              </g>
-              {/* 가운데 단추 */}
-              <circle cx={R} cy={R} r="26" className="fill-card stroke-primary/40" strokeWidth="4" />
-              <text x={R} y={R} textAnchor="middle" dominantBaseline="middle" className="fill-primary font-display text-[13px]">
-                {left > 0 ? `${left}번` : "잠김"}
-              </text>
-            </svg>
-          </div>
-
-          <Button type="button" size="lg" className="mt-5" onClick={spin} disabled={spinning || left <= 0 || n < 2}>
-            {left > 0 ? <Sparkles /> : <Lock />}
-            {spinning ? "돌아가는 중…" : cfg.spinLabel}
-          </Button>
-
-          {/* 당첨 결과 */}
-          <p aria-live="polite" className="mt-4 min-h-[3.5rem] text-center">
-            {won ? (
-              <span className="inline-flex animate-in zoom-in-75 items-center gap-2 rounded-2xl border-4 border-card bg-card px-4 py-2 font-display text-lg text-foreground shadow-pop-sm duration-500">
-                <span className="text-2xl">{emojiOf(won)}</span> {won.text} {cfg.winLabel}
+      <div className="space-y-8 rounded-[2rem] border-[3px] border-line bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16">
+        {/* 기준: 한 줄로 */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border-[2.5px] border-line bg-card px-4 py-3 text-sm shadow-pop-sm">
+          <span className="font-display text-base text-foreground">
+            {monthLabel || "이번 달"} 성공 <span className="text-xl text-primary">{successes}</span>개
+          </span>
+          {rules.map((r) => {
+            const ok = successes >= r.min;
+            return (
+              <span key={r.min} className="flex items-center gap-1.5 text-foreground">
+                <span
+                  className={cn(
+                    "flex size-5 shrink-0 items-center justify-center rounded-full",
+                    ok ? "bg-green text-foreground" : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {ok ? <Check className="size-3.5" strokeWidth={3} /> : <Lock className="size-3" />}
+                </span>
+                {r.min}개 이상 → 룰렛 {r.spins}번
               </span>
-            ) : null}
-          </p>
-
+            );
+          })}
+          <span className="rounded-full bg-muted/70 px-3 py-1 text-muted-foreground">
+            {earned > 0
+              ? `이번 달 ${earned}번 중 ${Math.min(used, earned)}번 돌렸어요. ${left > 0 ? `${left}번 더 돌릴 수 있어요!` : "다음 달에 또 만나요!"}`
+              : nextRule
+                ? `${nextRule.min - successes}개만 더 성공하면 룰렛을 돌릴 수 있어요!`
+                : ""}
+          </span>
         </div>
 
-        {/* ───── 기준 + 목록 + 기록 ───── */}
-        <div className="space-y-4">
-          {/* 기준 */}
-          <div className="rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm">
-            <p className="font-display text-base text-foreground">
-              {monthLabel || "이번 달"} 성공 <span className="text-2xl text-primary">{successes}</span>개
+        {/* 룰렛(왼쪽) + 보상 목록(오른쪽) */}
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          {/* ───── 룰렛 ───── */}
+          <div className="relative mx-auto flex w-full max-w-sm flex-col items-center">
+            {burst > 0 ? <TrophyFountain key={burst} label={cfg.winLabel} className="-inset-x-10 -top-10" /> : null}
+
+            <div className="relative w-full">
+              {/* 맨 위 바늘 */}
+              <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1">
+                <div className="h-0 w-0 border-x-[14px] border-t-[24px] border-x-transparent border-t-foreground drop-shadow" />
+              </div>
+
+              <svg viewBox={`0 0 ${R * 2} ${R * 2}`} className="w-full drop-shadow-[0_8px_0_color-mix(in_oklab,var(--foreground)_15%,transparent)]" role="img" aria-label={`${cfg.boardTitle}, 칸 ${n}개`}>
+                <g
+                  style={{
+                    transform: `rotate(${rotation}deg)`,
+                    transformOrigin: "50% 50%",
+                    transition: spinning ? "transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 1)" : "none",
+                  }}
+                >
+                  {rewards.map((r, i) => {
+                    const a0 = i * slice;
+                    const a1 = (i + 1) * slice;
+                    const p0 = point(a0, R - 4);
+                    const p1 = point(a1, R - 4);
+                    const large = slice > 180 ? 1 : 0;
+                    const mid = a0 + slice / 2;
+                    const ep = point(mid, R * 0.7); // 그림 (바깥쪽)
+                    const np = point(mid, R * 0.4); // 번호 (안쪽) — 이름은 오른쪽 '보상 목록'에서
+                    const look = catLooks[r.cat] ?? catLooks.do;
+                    return (
+                      <g key={`${r.text}-${i}`}>
+                        <path
+                          d={`M${R},${R} L${p0.x},${p0.y} A${R - 4},${R - 4} 0 ${large} 1 ${p1.x},${p1.y} Z`}
+                          className={cn(look.fill, "stroke-card", result === i && !spinning && "fill-primary/50")}
+                          strokeWidth="3"
+                        />
+                        <text
+                          x={ep.x}
+                          y={ep.y}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          transform={`rotate(${mid} ${ep.x} ${ep.y})`}
+                          className="text-[30px]"
+                        >
+                          {emojiOf(r)}
+                        </text>
+                        <circle cx={np.x} cy={np.y} r="11" className="fill-card" />
+                        <text
+                          x={np.x}
+                          y={np.y}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          transform={`rotate(${-rotation} ${np.x} ${np.y})`}
+                          className="fill-foreground font-display text-[13px]"
+                        >
+                          {i + 1}
+                        </text>
+                      </g>
+                    );
+                  })}
+                  <circle cx={R} cy={R} r={R - 4} className="fill-none stroke-card" strokeWidth="8" />
+                </g>
+                {/* 가운데 단추 */}
+                <circle cx={R} cy={R} r="26" className="fill-card stroke-primary/40" strokeWidth="4" />
+                <text x={R} y={R} textAnchor="middle" dominantBaseline="middle" className="fill-primary font-display text-[13px]">
+                  {left > 0 ? `${left}번` : "잠김"}
+                </text>
+              </svg>
+            </div>
+
+            <Button type="button" size="lg" className="mt-5" onClick={spin} disabled={spinning || left <= 0 || n < 2}>
+              {left > 0 ? <Sparkles /> : <Lock />}
+              {spinning ? "돌아가는 중…" : cfg.spinLabel}
+            </Button>
+
+            {/* 당첨 결과 */}
+            <p aria-live="polite" className="mt-4 min-h-[3.5rem] text-center">
+              {won ? (
+                <span className="inline-flex animate-in zoom-in-75 items-center gap-2 rounded-2xl border-[2.5px] border-line bg-card px-4 py-2 font-display text-lg text-foreground shadow-pop-sm duration-500">
+                  <span className="text-2xl">{emojiOf(won)}</span> {won.text} {cfg.winLabel}
+                </span>
+              ) : null}
             </p>
-            <ul className="mt-3 space-y-2">
-              {rules.map((r) => {
-                const ok = successes >= r.min;
-                return (
-                  <li key={r.min} className="flex items-center gap-2 text-sm text-foreground">
-                    <span
-                      className={cn(
-                        "flex size-6 shrink-0 items-center justify-center rounded-full",
-                        ok ? "bg-green text-foreground" : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {ok ? <Check className="size-4" strokeWidth={3} /> : <Lock className="size-3.5" />}
-                    </span>
-                    한 달에 {r.min}개 이상 성공 → 룰렛 {r.spins}번
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-sm text-muted-foreground">
-              {earned > 0
-                ? `이번 달 ${earned}번 중 ${Math.min(used, earned)}번 돌렸어요. ${left > 0 ? `${left}번 더 돌릴 수 있어요!` : "다음 달에 또 만나요!"}`
-                : nextRule
-                  ? `${nextRule.min - successes}개만 더 성공하면 룰렛을 돌릴 수 있어요!`
-                  : ""}
-            </p>
+
           </div>
 
           {/* 보상 목록: 룰렛 번호 = 목록 번호. '고치기'를 누르면 추가·삭제 */}
-          <div className="rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm">
+          <div className="rounded-2xl border-[2.5px] border-line bg-card p-4 shadow-pop-sm">
             <div className="flex items-center gap-2">
               <p className="flex-1 font-display text-base text-foreground">
                 {cfg.listTitle} <span className="text-sm text-muted-foreground">({n}/12)</span>
@@ -348,27 +346,37 @@ export function RewardRoulette() {
               </form>
             ) : null}
           </div>
+        </div>
 
-          {/* 당첨 기록 */}
-          {history.length > 0 ? (
-            <div className="rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm">
-              <p className="font-display text-base text-foreground">{cfg.historyTitle}</p>
-              <ul className="mt-2 space-y-1.5">
-                {history.slice(0, 5).map((w, i) => {
-                  const look = catLooks[w.cat] ?? catLooks.do;
-                  return (
-                    <li key={i} className="flex items-center gap-2 text-sm text-foreground">
-                      <span className="w-10 shrink-0 font-display text-xs text-muted-foreground">{w.month}</span>
-                      <span className={cn("flex size-6 shrink-0 items-center justify-center rounded-full", look.chip)}>
-                        <look.Icon className="size-3.5" />
-                      </span>
-                      {emojiOf(w)} {w.text}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ) : null}
+        {/* 당첨 기록: 맨 위 '기준' 줄과 짝을 이루는 아래 줄 (책갈피 모양 칩) */}
+        <div className="rounded-2xl border-[2.5px] border-line bg-card px-4 py-3 shadow-pop-sm">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="mr-1 flex items-center gap-1.5 font-display text-base text-foreground">
+              <Trophy className="size-4 text-primary" />
+              {cfg.historyTitle}
+            </span>
+            {history.length > 0 ? (
+              history.slice(0, 6).map((w, i) => {
+                const look = catLooks[w.cat] ?? catLooks.do;
+                return (
+                  <span
+                    key={i}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full border-2 border-line/20 px-3 py-1 text-sm text-foreground",
+                      look.chip,
+                      i === 0 && "animate-in zoom-in-75 duration-500",
+                    )}
+                  >
+                    <span className="font-display text-xs text-muted-foreground">{w.month}</span>
+                    <span>{emojiOf(w)}</span>
+                    {w.text}
+                  </span>
+                );
+              })
+            ) : (
+              <span className="text-sm text-muted-foreground">아직 당첨 기록이 없어요. 룰렛을 돌려 첫 보상을 받아 보세요!</span>
+            )}
+          </div>
         </div>
       </div>
     </div>

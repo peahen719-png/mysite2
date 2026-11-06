@@ -169,15 +169,15 @@ export function AchievementGraph() {
     <div className="relative mt-20">
       {/* 보라 거리 표지판 제목 */}
       <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative -rotate-1 rounded-2xl border-4 border-card bg-primary px-6 py-3 text-center font-display text-xl text-primary-foreground shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+        <p className="relative -rotate-1 rounded-2xl border-[2.5px] border-line bg-primary px-6 py-3 text-center font-display text-xl text-primary-foreground shadow-pop sm:px-10 sm:text-3xl">
+          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
           {data.boardTitle}
         </p>
       </div>
 
-      <div className="grid gap-5 rounded-[2rem] border-[6px] border-card bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid gap-5 rounded-[2rem] border-[3px] border-line bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* ───── 달마다 성공한 실천 (막대) ───── */}
-        <div ref={boxRef} className="rounded-2xl border-4 border-card bg-card p-4 shadow-pop-sm sm:p-6">
+        <div ref={boxRef} className="rounded-2xl border-[2.5px] border-line bg-card p-4 shadow-pop-sm sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="font-display text-lg text-foreground sm:text-xl">{data.chartTitle}</h3>
             {change > 0 ? (
@@ -253,7 +253,7 @@ export function AchievementGraph() {
             {/* 말풍선 */}
             {hover !== null ? (
               <div
-                className="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded-xl border-2 border-card bg-foreground px-3 py-1.5 font-display text-sm text-card shadow-pop-sm"
+                className="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded-xl border-2 border-line bg-foreground px-3 py-1.5 font-display text-sm text-card shadow-pop-sm"
                 style={{
                   left: `${((PAD.left + slot * (hover + 0.5)) / W) * 100}%`,
                   top: `${(y(months[hover].value) / H) * 100 - 3}%`,
@@ -304,7 +304,7 @@ export function AchievementGraph() {
 
         {/* ───── 실천 레이스 결과 한눈에 ───── */}
         <div className="flex flex-col gap-3">
-          <div className="lift rounded-2xl border-4 border-card bg-card p-4 text-center shadow-pop-sm">
+          <div className="lift rounded-2xl border-[2.5px] border-line bg-card p-4 text-center shadow-pop-sm">
             <p className="font-display text-sm text-muted-foreground">{data.rateLabel}</p>
             <p className="font-display text-5xl text-foreground">{rate === null ? "–" : <CountUp value={rate} suffix="%" />}</p>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -317,7 +317,7 @@ export function AchievementGraph() {
               return (
                 <div
                   key={option.key}
-                  className="lift flex items-center gap-2 rounded-2xl border-4 border-card bg-card p-3 shadow-pop-sm"
+                  className="lift flex items-center gap-2 rounded-2xl border-[2.5px] border-line bg-card p-3 shadow-pop-sm"
                 >
                   <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-full", look?.color)}>
                     {look ? <look.Icon className="size-5" strokeWidth={3} /> : null}
@@ -337,7 +337,7 @@ export function AchievementGraph() {
           <Mascot
             className="mt-auto justify-center pt-4"
             side="left"
-            tone="pink"
+           
             messages={[
               `${months[months.length - 1].label}에 ${months[months.length - 1].value}${data.unit}! 정말 잘했어요!`,
               change > 0 ? `${months[0].label}보다 ${change}${data.unit} 늘었어요. 축하해요!` : "꾸준히 하는 게 제일 멋져요!",

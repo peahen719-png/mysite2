@@ -11,7 +11,7 @@ export function Footer() {
   const { footer } = siteConfig;
   return (
     <footer className="px-3 pb-6 pt-10 sm:px-5">
-      <div className="mx-auto max-w-6xl rounded-[2rem] border-4 border-card bg-card/80 shadow-pop-sm backdrop-blur">
+      <div className="mx-auto max-w-6xl rounded-[2rem] border-[2.5px] border-line bg-card/80 shadow-pop-sm backdrop-blur">
         <Container className="flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-display text-3xl text-primary">{siteConfig.name}</p>

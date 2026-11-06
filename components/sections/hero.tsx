@@ -8,8 +8,10 @@ import { AnalogClock } from "@/components/ui/analog-clock";
 import { CheerBurst } from "@/components/ui/cheer-burst";
 import { Button } from "@/components/ui/button";
 import { TypewriterText } from "@/components/ui/typewriter-text";
+import { LightMotes } from "@/components/ui/light-motes";
+import { LivingPicture } from "@/components/ui/living-picture";
 
-/* 첫 화면(히어로) — 말랑말랑한 3D 여행 이정표 포스터 느낌.
+/* 첫 화면(히어로) — 한옥 도서관 그림(site.config.ts 의 libraryImage)을 옅게 깐 배경 위의 3D 이정표.
    - 글자는 관리자 페이지(/admin → 히어로 글자)에서 바꿉니다.
      저장한 적 없는 칸은 site.config.ts 의 hero 글자가 보입니다.
    - 버튼 주소(href)와 이정표 글자(decor)는 site.config.ts 에서 바꿉니다.
@@ -34,13 +36,6 @@ const signStyles = [
 const enter = (delay: number) => ({ animationDelay: `${delay}ms` });
 const enterClass = "animate-enter motion-reduce:animate-none";
 
-/* 흐릿한 흰 구름 */
-const clouds = [
-  "left-[-6%] top-[10%] h-32 w-72",
-  "right-[-8%] top-[38%] h-40 w-96",
-  "left-[30%] bottom-[-6%] h-36 w-[28rem]",
-];
-
 export async function Hero() {
   const { hero, steps } = siteConfig;
   const texts = await getHeroTexts();
@@ -49,56 +44,30 @@ export async function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate overflow-hidden bg-linear-to-b from-secondary via-background to-background"
+      className="relative isolate overflow-hidden bg-background"
     >
-      {/* 흐릿한 구름 */}
+      {/* 배경: 한옥 도서관 그림을 옅게 + 글자 쪽(왼쪽)은 더 옅게 덮어서 잘 읽히게 */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        {clouds.map((pos) => (
-          <div key={pos} className={cn("absolute animate-float rounded-full bg-card/80 blur-2xl motion-reduce:animate-none", pos)} />
-        ))}
+        {/* 그림은 오른쪽으로 치우쳐 깔아서 사모예드가 제목과 겹치지 않게. 천천히 움직이고 잎이 떨어짐 */}
+        <LivingPicture
+          src={siteConfig.libraryImage}
+          className="inset-y-0 right-0 w-full lg:w-[78%]"
+          imageClassName="opacity-50"
+        />
+        <div className="absolute inset-0 bg-linear-to-r from-background via-background/70 to-background/0" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-linear-to-b from-transparent to-background" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-background/80 to-transparent" />
       </div>
 
-      {/* 옅은 배경 그림: 왼쪽 아래에서 오른쪽 위 깃발(목표)까지 이어지는 길과, 그 길을 따라 날아가는 종이비행기 */}
-      <svg
-        aria-hidden
-        viewBox="0 0 1200 700"
-        preserveAspectRatio="xMidYMid slice"
-        className="pointer-events-none absolute inset-0 -z-10 size-full opacity-40"
-      >
-        {/* 먼 산 */}
-        <path d="M760 700 L960 420 L1080 540 L1200 380 L1200 700 Z" className="fill-primary/15" />
-        <path d="M880 700 L1040 500 L1200 640 L1200 700 Z" className="fill-sky/20" />
-        {/* 목표로 가는 길 (점선이 앞으로 흘러감) */}
-        <path
-          id="hero-journey"
-          d="M-20 660 C 200 600, 260 470, 430 470 S 650 530, 770 400 S 920 210, 1060 150"
-          fill="none"
-          className="stroke-primary"
-          strokeWidth="6"
-          strokeLinecap="round"
-          strokeDasharray="2 22"
-        >
-          <animate attributeName="stroke-dashoffset" from="48" to="0" dur="1.6s" repeatCount="indefinite" />
-        </path>
-        {/* 깃발 + 반짝 */}
-        <line x1="1060" y1="150" x2="1060" y2="70" className="stroke-foreground/60" strokeWidth="5" strokeLinecap="round" />
-        <path d="M1060 72 L1120 92 L1060 112 Z" className="fill-pink" />
-        <path d="M1130 40 l8 18 18 8 -18 8 -8 18 -8 -18 -18 -8 18 -8 Z" className="fill-orange" />
-        {/* 길을 따라 날아가는 종이비행기 */}
-        <g className="motion-reduce:hidden">
-          <path d="M-18 -10 L22 0 L-18 10 L-10 0 Z" className="fill-primary" />
-          <animateMotion dur="10s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#hero-journey" />
-          </animateMotion>
-        </g>
-      </svg>
+      {/* 도서관에 떠다니는 반짝이는 빛 먼지 */}
+      <LightMotes className="-z-10" />
 
       <Container className="grid min-h-[90svh] items-center gap-10 py-20 lg:grid-cols-[1.1fr_1fr]">
         {/* 왼쪽 글자 */}
         <div className="flex flex-col items-start">
           {/* 분홍 스티커 라벨 */}
           <div className={enterClass} style={enter(0)}>
-            <p className="origin-left -rotate-3 animate-breathe rounded-full border-4 border-card bg-pink motion-reduce:animate-none px-5 py-1.5 font-display text-lg text-pink-foreground shadow-pop-sm">
+            <p className="origin-left -rotate-3 animate-breathe rounded-full border-[2.5px] border-line bg-pink motion-reduce:animate-none px-5 py-1.5 font-display text-lg text-pink-foreground shadow-pop-sm">
               {texts.eyebrow}
             </p>
           </div>
@@ -134,12 +103,12 @@ export async function Hero() {
           {/* 기둥 */}
           <div
             aria-hidden
-            className="absolute bottom-0 left-1/2 top-24 -ml-5 w-10 rounded-full border-4 border-card bg-linear-to-r from-accent via-primary/60 to-primary shadow-pop"
+            className="absolute bottom-0 left-1/2 top-24 -ml-5 w-10 rounded-full border-[2.5px] border-line bg-linear-to-r from-accent via-primary/60 to-primary shadow-pop"
           />
 
           {/* 맨 위 마름모 + 아날로그 시계 */}
           <div className="absolute inset-x-0 top-0 flex justify-center">
-            <div className="flex size-24 rotate-45 items-center justify-center rounded-3xl border-[6px] border-card bg-primary/85 shadow-pop">
+            <div className="flex size-24 rotate-45 items-center justify-center rounded-3xl border-[3px] border-line bg-primary/85 shadow-pop">
               <AnalogClock className="size-[78px] -rotate-45" />
             </div>
           </div>
@@ -147,14 +116,14 @@ export async function Hero() {
           {/* 보라색 큰 판 + 분홍 스티커. 마우스를 올리면 decor.hoverText 글자가 크게 펼쳐졌다 하트와 함께 사라짐 */}
           {decor.board ? (
             <div aria-hidden className="absolute inset-x-0 top-[104px] flex justify-center">
-              <div className="group relative -rotate-2 cursor-default rounded-[2rem] border-[6px] border-card bg-primary px-10 py-6 shadow-pop transition-transform duration-300 hover:-rotate-4 hover:scale-105">
+              <div className="group relative -rotate-2 cursor-default rounded-[2rem] border-[3px] border-line bg-primary px-10 py-6 shadow-pop transition-transform duration-300 hover:-rotate-4 hover:scale-105">
                 <div className="absolute inset-x-5 top-2 h-3 rounded-full bg-card/30" />
                 <p className="whitespace-pre-line text-center font-display text-5xl leading-[1.05] text-primary-foreground">
                   {decor.board}
                 </p>
                 {decor.hoverText ? <CheerBurst text={decor.hoverText} /> : null}
                 {decor.sticker ? (
-                  <span className="absolute -bottom-4 -right-8 rotate-12 rounded-xl border-4 border-card bg-pink px-3 py-1 font-display text-sm text-pink-foreground shadow-pop-sm">
+                  <span className="absolute -bottom-4 -right-8 rotate-12 rounded-xl border-[2.5px] border-line bg-pink px-3 py-1 font-display text-sm text-pink-foreground shadow-pop-sm">
                     {decor.sticker}
                   </span>
                 ) : null}
@@ -189,10 +158,10 @@ export async function Hero() {
                   {step.signTip ? (
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute bottom-[calc(100%+0.6rem)] left-1/2 -translate-x-1/2 scale-50 whitespace-nowrap rounded-2xl border-4 border-card bg-card px-4 py-2 font-display text-lg text-foreground opacity-0 shadow-pop transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/sign:scale-100 group-hover/sign:opacity-100 group-focus-visible/sign:scale-100 group-focus-visible/sign:opacity-100"
+                      className="pointer-events-none absolute bottom-[calc(100%+0.6rem)] left-1/2 -translate-x-1/2 scale-50 whitespace-nowrap rounded-2xl border-[2.5px] border-line bg-card px-4 py-2 font-display text-lg text-foreground opacity-0 shadow-pop transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/sign:scale-100 group-hover/sign:opacity-100 group-focus-visible/sign:scale-100 group-focus-visible/sign:opacity-100"
                     >
                       {step.signTip}
-                      <span className="absolute -bottom-2.5 left-1/2 size-4 -translate-x-1/2 rotate-45 border-b-4 border-r-4 border-card bg-card" />
+                      <span className="absolute -bottom-2.5 left-1/2 size-4 -translate-x-1/2 rotate-45 border-b-4 border-r-4 border-line bg-card" />
                     </span>
                   ) : null}
                 </a>
@@ -209,7 +178,7 @@ export async function Hero() {
         className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 font-display text-xs tracking-[0.3em] text-muted-foreground transition-colors hover:text-primary lg:flex"
       >
         SCROLL
-        <span className="flex size-9 animate-bounce items-center justify-center rounded-full border-2 border-card bg-card/80 shadow-pop-sm motion-reduce:animate-none">
+        <span className="flex size-9 animate-bounce items-center justify-center rounded-full border-2 border-line bg-card/80 shadow-pop-sm motion-reduce:animate-none">
           <ChevronDown className="size-4" />
         </span>
       </a>

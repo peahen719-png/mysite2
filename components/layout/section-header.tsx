@@ -17,7 +17,7 @@ export function SectionHeader({
   return (
     <div className={cn("max-w-2xl", className)}>
       {eyebrow ? (
-        <p className="inline-flex items-center gap-2 rounded-full border-2 border-card bg-card/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground shadow-pop-sm backdrop-blur">
+        <p className="inline-flex items-center gap-2 rounded-full border-2 border-line bg-card/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground shadow-pop-sm backdrop-blur">
           <span className="relative flex size-2">
             <span className="absolute inset-0 animate-ping rounded-full bg-primary/60 motion-reduce:hidden" />
             <span className="relative size-2 rounded-full bg-primary" />

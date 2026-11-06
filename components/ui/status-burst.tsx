@@ -38,7 +38,7 @@ export function StatusBurst({ kind, text }: { kind: string; text: string }) {
         <span
           key={i}
           className={cn(
-            "absolute flex size-9 animate-emojipop items-center justify-center rounded-full border-2 border-card opacity-0 shadow-pop-sm",
+            "absolute flex size-9 animate-emojipop items-center justify-center rounded-full border-2 border-line opacity-0 shadow-pop-sm",
             look.bg,
           )}
           style={{ "--dx": p.dx, "--dy": p.dy, animationDelay: `${0.08 + i * 0.05}s` } as CSSProperties}
@@ -48,7 +48,7 @@ export function StatusBurst({ kind, text }: { kind: string; text: string }) {
       ))}
       <span
         className={cn(
-          "relative flex animate-labelpop items-center gap-1.5 whitespace-nowrap rounded-full border-4 border-card px-4 py-2 font-display text-lg text-foreground opacity-0 shadow-pop sm:text-2xl",
+          "relative flex animate-labelpop items-center gap-1.5 whitespace-nowrap rounded-full border-[2.5px] border-line px-4 py-2 font-display text-lg text-foreground opacity-0 shadow-pop sm:text-2xl",
           look.bg,
         )}
       >

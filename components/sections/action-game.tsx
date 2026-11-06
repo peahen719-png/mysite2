@@ -178,15 +178,15 @@ export function ActionGame() {
     <div className="relative mx-auto mt-20 max-w-4xl">
       {/* 주황 거리 표지판 제목 */}
       <div className="absolute inset-x-0 -top-8 z-30 flex justify-center px-4">
-        <p className="relative rotate-1 rounded-2xl border-4 border-card bg-orange px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
+        <p className="relative rotate-1 rounded-2xl border-[2.5px] border-line bg-orange px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
+          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
           {game.boardTitle}
         </p>
       </div>
 
-      <div className="rounded-[2rem] border-[6px] border-card bg-linear-to-br from-secondary to-muted p-3 pt-12 shadow-pop sm:p-6 sm:pt-14">
+      <div className="rounded-[2rem] border-[3px] border-line bg-linear-to-br from-secondary to-muted p-3 pt-12 shadow-pop sm:p-6 sm:pt-14">
         {/* 결과 표시 고르기 (캐릭터가 있는 칸에 적용) */}
-        <div className="mb-5 flex flex-wrap items-center justify-center gap-2 rounded-2xl border-4 border-card bg-card/80 px-4 py-3">
+        <div className="mb-5 flex flex-wrap items-center justify-center gap-2 rounded-2xl border-[2.5px] border-line bg-card/80 px-4 py-3">
           <span className="mr-1 font-display text-sm text-foreground sm:text-base">
             {canMark ? `${pos}번 칸 ${game.statusPrompt}` : game.statusHint}
           </span>
@@ -201,7 +201,7 @@ export function ActionGame() {
                 disabled={!canMark}
                 aria-pressed={active}
                 className={cn(
-                  "flex items-center gap-1 rounded-full border-4 border-card px-3 py-1 font-display text-sm shadow-pop-sm transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40 sm:text-base",
+                  "flex items-center gap-1 rounded-full border-[2.5px] border-line px-3 py-1 font-display text-sm shadow-pop-sm transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40 sm:text-base",
                   active ? cn(look?.tile, look?.ink) : "bg-card text-foreground",
                 )}
               >
@@ -232,7 +232,7 @@ export function ActionGame() {
 
         {/* 놀이판: 직소 퍼즐 (가로:세로 = 5:4). 성공한 칸마다 그림 조각이 드러남 */}
         <div className="relative aspect-[5/4] w-full" role="group" aria-label={`${game.boardTitle}. 지금 ${pos}번 칸`}>
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-card shadow-pop-sm">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border-[2.5px] border-line shadow-pop-sm">
             {Array.from({ length: GOAL + 1 }, (_, i) => {
               const { col, row, w } = cellPlace(i);
               const mission = missionAt(i);
@@ -265,14 +265,14 @@ export function ActionGame() {
               if (i === 0) {
                 // 출발·도착: 지도 위에 작은 이름표만
                 content = (
-                  <span className="flex items-center gap-1 rounded-full border-2 border-card bg-pink px-2 py-0.5 font-display text-xs text-card shadow-pop-sm sm:px-3 sm:text-base">
+                  <span className="flex items-center gap-1 rounded-full border-2 border-line bg-pink px-2 py-0.5 font-display text-xs text-card shadow-pop-sm sm:px-3 sm:text-base">
                     <Flag className="size-3 sm:size-4" />
                     {game.startLabel}
                   </span>
                 );
               } else if (i === GOAL) {
                 content = (
-                  <span className="flex items-center gap-1 rounded-full border-2 border-card bg-primary px-2 py-0.5 font-display text-xs text-primary-foreground shadow-pop-sm sm:px-3 sm:text-base">
+                  <span className="flex items-center gap-1 rounded-full border-2 border-line bg-primary px-2 py-0.5 font-display text-xs text-primary-foreground shadow-pop-sm sm:px-3 sm:text-base">
                     <PartyPopper className="size-3 sm:size-4" />
                     {game.goalLabel}
                   </span>
@@ -282,10 +282,10 @@ export function ActionGame() {
                 content = (
                   <span
                     key={status}
-                    className="relative flex aspect-square w-[46%] -rotate-12 items-center justify-center rounded-full border-4 border-card bg-card shadow-pop-sm animate-in zoom-in-50 spin-in-12 duration-500"
+                    className="relative flex aspect-square w-[46%] -rotate-12 items-center justify-center rounded-full border-[2.5px] border-line bg-card shadow-pop-sm animate-in zoom-in-50 spin-in-12 duration-500"
                   >
                     <statusLook.Icon className={cn("size-3/5", statusLook.text)} strokeWidth={3.5} />
-                    <span className="absolute -bottom-1.5 -right-2 rounded-full border-2 border-card bg-foreground px-1 font-display text-[9px] text-card sm:text-xs">
+                    <span className="absolute -bottom-1.5 -right-2 rounded-full border-2 border-line bg-foreground px-1 font-display text-[9px] text-card sm:text-xs">
                       {i}
                     </span>
                   </span>
@@ -336,7 +336,7 @@ export function ActionGame() {
                     {slice(`${(-col * 100) / w}cqw`, `${-row * 100}cqh`)}
                     {done ? (
                       // 성공한 조각: 그림 위에 작은 체크 도장
-                      <span className="absolute left-1 top-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-card text-red-deep shadow-pop-sm animate-in zoom-in-50 duration-500 sm:size-7">
+                      <span className="absolute left-1 top-1 flex size-5 items-center justify-center rounded-full border-2 border-line bg-card text-red-deep shadow-pop-sm animate-in zoom-in-50 duration-500 sm:size-7">
                         <Check className="size-3 sm:size-4" strokeWidth={3.5} />
                       </span>
                     ) : null}
@@ -409,7 +409,7 @@ export function ActionGame() {
             style={{ left: `${token.x / 5}%`, top: `${token.y / 4}%` }}
           >
             <div key={hop} className="animate-in fade-in zoom-in-75 slide-in-from-bottom-4 duration-500">
-              <Buddy tone="primary" />
+              <Buddy />
             </div>
           </div>
         </div>
@@ -418,7 +418,7 @@ export function ActionGame() {
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <p
             aria-live="polite"
-            className="flex-1 rounded-2xl border-4 border-card bg-card px-4 py-3 font-display text-base text-foreground shadow-pop-sm sm:text-lg"
+            className="flex-1 rounded-2xl border-[2.5px] border-line bg-card px-4 py-3 font-display text-base text-foreground shadow-pop-sm sm:text-lg"
           >
             {message}
           </p>

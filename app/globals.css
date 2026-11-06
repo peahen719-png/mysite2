@@ -22,56 +22,62 @@
    색은 #9a0002 같은 HEX 값으로 바꿔도 됩니다.
    ========================================================================== */
 :root {
-  --radius: 1.25rem; /* 말랑말랑하게 많이 둥글게 */
+  --radius: 1rem; /* 살짝 둥글게 */
 
-  /* 맑은 하늘색 배경 + 진한 보라 글자 */
-  --background: #e6f3ff;
-  --foreground: #2a2350;
+  /* ★ 가을 한옥 서재 일러스트 — 햇살 받은 한지 + 짙은 나무색 먹선 */
+  --background: #f3e2c4;
+  --foreground: #3a2214;
 
-  --card: #ffffff;
-  --card-foreground: #2a2350;
-  --popover: #ffffff;
-  --popover-foreground: #2a2350;
+  /* 카드 = 크림빛 한지 */
+  --card: #fcf2df;
+  --card-foreground: #3a2214;
+  --popover: #fcf2df;
+  --popover-foreground: #3a2214;
 
-  /* 라벤더 보라 (큰 표지판, 주요 버튼) */
-  --primary: #8b6cf0;
-  --primary-foreground: #ffffff;
+  /* 도포 다홍 (큰 현판, 주요 버튼) */
+  --primary: #c8462b;
+  --primary-foreground: #fff6e6;
 
-  --secondary: #cfe7ff;
-  --secondary-foreground: #2a2350;
+  --secondary: #ecd3aa;
+  --secondary-foreground: #3a2214;
 
-  /* 연한 하늘색 (카드, 구역 배경) */
-  --muted: #d6ebff;
-  --muted-foreground: #5a5780;
+  /* 마루빛 (구역 배경) */
+  --muted: #ead3ae;
+  --muted-foreground: #7a5236;
 
-  /* 연보라 (마우스 올렸을 때) */
-  --accent: #efe9ff;
-  --accent-foreground: #2a2350;
+  /* 살구빛 (마우스 올렸을 때) */
+  --accent: #f6dcbc;
+  --accent-foreground: #3a2214;
 
-  /* 화살표 표지판 / 스티커 색 */
-  --pink: #ff5fa2; /* HOT DEAL 스티커 */
-  --pink-foreground: #ffffff;
-  --sky: #2f7bf6; /* 파란 표지판 */
-  --teal: #20bfd3; /* 청록 표지판 */
-  --orange: #ff8a3d; /* 주황 표지판 */
-  /* 실천 레이스 결과 표시 색 — 파스텔 (성공 = 빨강, 보류 = 노랑, 재도전 = 초록)
-     -deep 은 도장 아이콘처럼 흰 바탕 위에 올라가는 진한 색 */
-  --red: #ffa3b1;
-  --yellow: #ffdc7d;
-  --green: #9be0b8;
-  --red-deep: #e0566b;
-  --yellow-deep: #c48f00;
-  --green-deep: #2e9e64;
+  /* 표지판 / 스티커 색 — 그림 속 색 */
+  --pink: #d9715f; /* 홍시 */
+  --pink-foreground: #fff6e6;
+  --sky: #4e6f86; /* 푸른 책 표지 · 기와 */
+  --teal: #5d8a69; /* 초록 책 표지 */
+  --orange: #e07a35; /* 단풍 */
+  /* 실천 레이스 결과 표시 색 (성공 = 빨강, 보류 = 노랑, 재도전 = 초록)
+     -deep 은 도장 아이콘처럼 밝은 바탕 위에 올라가는 진한 색 */
+  --red: #eb9b84;
+  --yellow: #ecc061;
+  --green: #a9c98e;
+  --red-deep: #b33a24;
+  --yellow-deep: #9a6a0c;
+  --green-deep: #3f7448;
 
-  --destructive: #dc2626;
+  /* 그림 소품 색 */
+  --line: #4a2a16; /* 먹선 (모든 테두리) */
+  --fur: #fffaf0; /* 사모예드 털 */
+  --wood: #9a5a2e; /* 나무 */
 
-  --border: #d3dcf3;
-  --input: #d3dcf3;
-  --ring: #8b6cf0;
+  --destructive: #b33a24;
+
+  --border: #dcc19a;
+  --input: #dcc19a;
+  --ring: #c8462b;
 
   /* 폰트 (app/layout.tsx 에서 불러옴) */
   --font-body: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-display: var(--font-nunito), var(--font-jua), var(--font-body); /* 둥글고 굵은 제목 */
+  --font-display: var(--font-gowun), var(--font-body); /* 붓으로 쓴 듯 부드러운 한글 명조 제목 */
 }
 
 /* 다크 모드용 값 (html 태그에 class="dark" 를 붙이면 적용) */
@@ -127,6 +133,9 @@
   --color-red-deep: var(--red-deep);
   --color-yellow-deep: var(--yellow-deep);
   --color-green-deep: var(--green-deep);
+  --color-line: var(--line);
+  --color-fur: var(--fur);
+  --color-wood: var(--wood);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -134,10 +143,9 @@
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
   /* 볼록하게 튀어나온 3D 그림자 (shadow-pop-sm, shadow-pop) */
-  --shadow-pop-sm: 0 4px 0 0 color-mix(in oklab, var(--foreground) 22%, transparent),
-    0 10px 18px -8px color-mix(in oklab, var(--foreground) 40%, transparent);
-  --shadow-pop: 0 7px 0 0 color-mix(in oklab, var(--foreground) 20%, transparent),
-    0 22px 36px -12px color-mix(in oklab, var(--foreground) 45%, transparent);
+  /* 그림책처럼 또렷한 아래 그림자 (shadow-pop-sm, shadow-pop) */
+  --shadow-pop-sm: 0 3px 0 0 var(--line), 0 10px 18px -10px rgb(74 42 22 / 0.45);
+  --shadow-pop: 0 5px 0 0 var(--line), 0 20px 34px -16px rgb(74 42 22 / 0.5);
   /* 둥실둥실 떠 있는 움직임 (animate-float) */
   --animate-float: float 6s ease-in-out infinite;
   /* 마우스를 올리면 글자가 튀어나와 크게 펼쳐졌다 사라짐 (animate-burst / animate-spread, 약 3초) */
@@ -371,6 +379,91 @@
       transform: translateY(-12px);
     }
   }
+  /* 살아 움직이는 그림 (components/ui/living-picture.tsx)
+     - animate-kenburns : 아주 천천히 다가갔다 물러남
+     - animate-beam     : 햇살 줄기가 은은하게 옆으로 흐름
+     - animate-leaf-fall: 잎이 --sway 쪽으로 흩날리며 떨어짐
+     - animate-flutter  : 잎이 앞뒤로 뒤집히며 팔랑 */
+  --animate-kenburns: kenburns 26s ease-in-out infinite alternate;
+  @keyframes kenburns {
+    from {
+      transform: scale(1.04) translate(0, 0);
+    }
+    to {
+      transform: scale(1.14) translate(-1.5%, -1%);
+    }
+  }
+  --animate-beam: beam 14s ease-in-out infinite alternate;
+  @keyframes beam {
+    from {
+      background-position: 0 0;
+      opacity: 0.35;
+    }
+    to {
+      background-position: 230px 0;
+      opacity: 0.7;
+    }
+  }
+  --animate-leaf-fall: leaf-fall 12s linear infinite;
+  @keyframes leaf-fall {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0);
+    }
+    8% {
+      opacity: 1;
+    }
+    35% {
+      transform: translate(calc(var(--sway) * 0.3 + 30px), 30vh);
+    }
+    65% {
+      transform: translate(calc(var(--sway) * 0.7 - 20px), 60vh);
+    }
+    90% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--sway), 92vh);
+    }
+  }
+  --animate-flutter: flutter 2.4s ease-in-out infinite;
+  @keyframes flutter {
+    0%,
+    100% {
+      transform: rotate(-30deg) rotateX(0deg) rotateY(0deg);
+    }
+    25% {
+      transform: rotate(10deg) rotateX(60deg) rotateY(20deg);
+    }
+    50% {
+      transform: rotate(40deg) rotateX(0deg) rotateY(70deg);
+    }
+    75% {
+      transform: rotate(5deg) rotateX(-50deg) rotateY(20deg);
+    }
+  }
+  /* 빛 먼지가 천천히 떠올랐다 사라짐 (animate-mote) */
+  --animate-mote: mote 12s ease-in-out infinite;
+  @keyframes mote {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.6);
+    }
+    30% {
+      opacity: 0.9;
+    }
+    50% {
+      transform: translate(18px, -18vh) scale(1);
+    }
+    80% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-10px, -36vh) scale(0.5);
+    }
+  }
   /* 첫 화면 글자·이정표가 차례로 떠오르며 등장 (animate-enter, 늦게 시작은 style 의 animationDelay) */
   --animate-enter: enter 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   @keyframes enter {
@@ -427,9 +520,14 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     word-break: keep-all; /* 한글 단어가 중간에 끊기지 않게 */
-    /* 은은한 점무늬 종이 질감 */
-    background-image: radial-gradient(color-mix(in oklab, var(--primary) 13%, transparent) 1.3px, transparent 1.7px);
-    background-size: 26px 26px;
+    /* 한지 바탕 + 옅은 한옥 창살(문살) 무늬 + 왼쪽 위 햇살 */
+    background-image:
+      radial-gradient(ellipse 70% 50% at 10% 0%, color-mix(in oklab, #ffe2a8 45%, transparent), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%239a5a2e' stroke-opacity='0.09' stroke-width='2'%3E%3Cpath d='M0 1H96M1 0V96M0 49H96M49 0V96'/%3E%3Crect x='33' y='33' width='32' height='32'/%3E%3Crect x='-15' y='-15' width='32' height='32'/%3E%3Crect x='81' y='-15' width='32' height='32'/%3E%3Crect x='-15' y='81' width='32' height='32'/%3E%3Crect x='81' y='81' width='32' height='32'/%3E%3C/svg%3E");
+    background-size:
+      100% 100%,
+      96px 96px;
+    background-attachment: fixed, scroll;
   }
   ::selection {
     background: color-mix(in oklab, var(--primary) 30%, transparent);
