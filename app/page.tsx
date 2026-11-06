@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
 import { StepSection } from "@/components/sections/step";
-import { ThoughtFilmBoard } from "@/components/sections/thought-film";
+import { ThoughtBookBoard } from "@/components/sections/thought-book";
 import { ScheduleBoard } from "@/components/sections/schedule";
 import { ActionGame } from "@/components/sections/action-game";
 import { ResultTrophy } from "@/components/sections/result-trophy";
@@ -18,7 +18,8 @@ import { InterestFeed } from "@/components/sections/interest-feed";
    - 섹션 빼기: 해당 줄을 지우면 됩니다.
    - 새 섹션 추가: components/sections 에 파일을 만들고 여기에 한 줄 추가.
    - 단계 섹션(생각·계획·실천·결과)은 site.config.ts 의 steps 개수만큼 자동으로 생깁니다.
-   - "생각" 섹션 안에는 생각 필름(ThoughtFilmBoard)이 들어갑니다. 생각 카드는 필름에만 보입니다.
+   - "생각" 섹션 안에는 생각 책(ThoughtBookBoard)이 들어갑니다. 생각 카드는 책에만 보입니다.
+     예전 필름 모양: import { ThoughtFilmBoard } from "@/components/sections/thought-film"; → <ThoughtFilmBoard />
    - "계획" 섹션 안에는 일정표(ScheduleBoard), "실천" 섹션 안에는 주사위 보드게임(ActionGame),
      "결과" 섹션 안에는 성과 뽑기 기계 + 트로피(ResultTrophy)와 성과 그래프(AchievementGraph), 보상 룰렛(RewardRoulette)이 들어갑니다.
      글자는 site.config.ts 의 schedule, actionGame, clawGame 에서 바꿉니다.
@@ -39,7 +40,7 @@ export default function HomePage() {
         {siteConfig.steps.map((step, i) => (
           <Fragment key={step.key}>
             <StepSection step={step} index={i} showCards={step.key !== "think" && step.key !== "result"}>
-              {step.key === "think" ? <ThoughtFilmBoard /> : null}
+              {step.key === "think" ? <ThoughtBookBoard /> : null}
               {step.key === "plan" ? <ScheduleBoard /> : null}
               {step.key === "do" ? <ActionGame /> : null}
               {step.key === "result" ? (

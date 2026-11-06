@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Gowun_Batang } from "next/font/google";
 
 import { siteConfig } from "@/site.config";
@@ -18,6 +18,19 @@ const gowun = Gowun_Batang({
 export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
+  // 카카오톡·SNS 에 링크를 붙였을 때 보이는 미리보기 (그림은 app/opengraph-image.jpg)
+  openGraph: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    locale: "ko_KR",
+    type: "website",
+  },
+};
+
+/* 휴대폰 주소창 색 = 한지 바탕색 */
+export const viewport: Viewport = {
+  themeColor: "#f3e2c4",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

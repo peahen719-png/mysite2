@@ -11,10 +11,20 @@ import type { Item } from "@/lib/types";
 export const siteConfig = {
   /* 브라우저 탭 제목과 검색 결과에 보이는 정보 */
   name: "해보자",
-  /* 한옥 도서관을 지키는 사모예드 그림 (첫 화면 배경 + 캐릭터). public 폴더 안의 파일 */
-  libraryImage: "/images/hanok-library.jpg",
-  title: "해보자 — 나의 첫 웹사이트",
-  description: "바이브 코딩으로 만든 나의 웹사이트입니다.",
+  /* 한옥 도서관을 지키는 사모예드 그림 (첫 화면 배경 + 동그란 캐릭터). public/images 안의 파일
+     - 장면 5장이 차례로 천천히 겹쳐 바뀌며 움직이는 것처럼 보임 (첫 화면 · 캐릭터 모두)
+     - face : 그 장면에서 사모예드 얼굴(갓 포함) 위치 (가로 %, 세로 %) — 동그란 캐릭터 액자가 여기를 확대함 */
+  /* 첫 화면 배경 동영상 (public/videos 안의 파일, 소리 없이 자동 반복) */
+  heroVideo: "/videos/momo.mp4",
+  libraryFrames: [
+    { src: "/images/library-27.jpg", face: [54, 38] },
+    { src: "/images/library-25.jpg", face: [52, 42] },
+    { src: "/images/library-24.jpg", face: [56, 38] },
+    { src: "/images/library-28.jpg", face: [56, 38] },
+    { src: "/images/library-26.jpg", face: [58, 37] },
+  ] as { src: string; face: [number, number] }[],
+  title: "해보자 · 한옥 도서관에서 쌓는 나의 성장 기록",
+  description: "생각하고, 계획하고, 실천하고, 거두는 나만의 성장 서재. 사모예드 선비가 지키는 한옥 도서관에서 오늘의 한 걸음을 기록해요.",
 
   /* 상단 메뉴 (href 의 #이름 은 아래 섹션의 id 와 같아야 해당 위치로 이동) */
   nav: [
@@ -78,7 +88,7 @@ export const siteConfig = {
       key: "result",
       eyebrow: "Step 04 · Result",
       title: "결과",
-      description: "해 보고 나서 얻은 것과 배운 점을 정리하는 단계입니다.",
+      description: "해낸 일들을 성취 서가에서 하나씩 꺼내, 보물함에 차곡차곡 모아 두는 단계입니다.",
       signTip: "GOOD!!!",
     },
   ],
@@ -87,12 +97,12 @@ export const siteConfig = {
      - 필름 칸은 관리자 페이지의 「생각 필름」 탭에서 추가한 카드로 채워집니다. (제목, 설명, 사진, 링크)
      - 아직 카드가 없을 때는 아래 samples 가 대신 보입니다. */
   thoughts: {
-    eyebrow: "Thinking Film",
-    title: "생각 필름",
-    description: "떠오른 생각을 한 컷씩 필름에 남겨 둡니다. 옆으로 넘겨 보세요.",
+    eyebrow: "Thinking Book",
+    title: "사색록",
+    description: "떠오른 생각을 한 장씩 책에 적어 둡니다. 책장을 넘겨 보세요.",
     filmLabel: "HAEBOJA\nFILM",
     /* 필름 칸을 누르면 아래에 열리는 기록 칸 */
-    pickHint: "필름 칸을 누르면 아래에 그 주제의 기록을 적을 수 있어요.",
+    pickHint: "책의 쪽을 누르면 아래에 그 주제의 기록을 적을 수 있어요.",
     notesTitle: "기록",
     notesEmpty: "아직 기록이 없어요. 꼬리표를 고르고 첫 기록을 남겨 보세요!",
     addLabel: "추가",
@@ -123,7 +133,7 @@ export const siteConfig = {
                 기간 계획(start ≠ end)은 오른쪽에 세로 막대로 그 기간 동안 쭉 표시됨
                 time = 시간(없어도 됨), note = 짧은 메모(없어도 됨) */
   schedule: {
-    boardTitle: "CALENDAR SCHEDULE",
+    boardTitle: "계획 두루마리",
     addLabel: "계획 추가",
     searchPlaceholder: "저장한 계획 찾기 (예: 자격증, 강의)",
     months: [
@@ -162,7 +172,7 @@ export const siteConfig = {
      - statuses : 위쪽 '결과 표시' 줄의 버튼. cheer = 표시할 때 팡팡 튀어나오는 응원 말
                   (성공은 폭죽도 함께 터짐) */
   actionGame: {
-    boardTitle: "실천 레이스",
+    boardTitle: "실천 고지도",
     hint: "칸을 눌러 내 캐릭터를 지금 하고 있는 실천 계획에 놓아 보세요!",
     startLabel: "출발",
     goalLabel: "도착",
@@ -197,18 +207,20 @@ export const siteConfig = {
      - 캡슐을 눌러 고른 뒤 '선택해서 담기'를 누르면 집게가 꺼내서 트로피에 담아 줍니다 */
   clawGame: {
     title: "나의 성과",
-    vendingTitle: "MY ACHIEVEMENTS",
+    vendingTitle: "성취 서가",
     soldLabel: "담았어요",
     trayLabel: "TAKE OUT",
-    mascotMessages: ["골라 봐요! 다 내 성과예요", "이렇게 많이 해냈다니!", "트로피를 꽉 채워 봐요!"],
-    hint: "진열된 성과를 눌러 고른 뒤 ‘선택해서 담기’를 눌러 보세요!",
-    pickLabel: "선택해서 담기",
+    mascotMessages: ["하나씩 꺼내 담아 봐요!", "이렇게 많이 해냈다니!", "보물함을 꽉 채워 봐요!"],
+    hint: "서가의 성취를 눌러 고른 뒤 ‘함에 담기’를 눌러 보세요!",
+    doorLabel: "서가 문 열기",
+    doorHint: "닫힌 서가 문을 눌러 열어 보세요!",
+    pickLabel: "함에 담기",
     resetLabel: "다시 꺼내기",
-    trophyTitle: "나의 성과 트로피",
-    trophyPlate: "MY TROPHY",
-    trophyCheer: "+1 성과!",
-    trophyEmpty: "고른 성과가 트로피에 담겨요",
-    doneMessage: "모든 성과를 트로피에 담았어요! 정말 멋져요!",
+    trophyTitle: "나의 성과 보물함",
+    trophyPlate: "보물함",
+    trophyCheer: "+1 성취!",
+    trophyEmpty: "고른 성과가 여기 담겨요",
+    doneMessage: "모든 성취를 보물함에 담았어요! 정말 멋져요!",
     samples: ["매일 30분 운동", "책 3권 완독", "새벽 기상 성공", "포트폴리오 완성", "저축 목표 달성", "첫 발표 무사히"],
   },
 
@@ -216,8 +228,8 @@ export const siteConfig = {
      - months : 달마다 성공한 실천 개수 (막대 그래프). 달을 더하거나 숫자를 바꾸면 그래프가 바뀝니다
      - 오른쪽 칸들은 실천 레이스에서 표시한 성공·보류·재도전 개수를 자동으로 셉니다 */
   achievements: {
-    boardTitle: "성과 그래프",
-    chartTitle: "달마다 성공한 실천",
+    boardTitle: "성취 보감",
+    chartTitle: "달마다 쌓인 성취",
     unit: "개",
     months: [
       { label: "7월", value: 2 },
@@ -236,10 +248,10 @@ export const siteConfig = {
   /* 보상 룰렛 (04 결과 섹션 안, 성과 그래프 아래)
      - 이번 달 성공 개수는 위 achievements.months 에서 이번 달 숫자를 씀 (예: "11월")
      - rules   : 기준. 한 달에 min 개 이상 성공하면 그 달에 spins 번 돌릴 수 있음 (가장 높은 기준 하나만 적용)
-     - rewards : 처음 룰렛 칸. 화면의 '보상 목록 고치기'에서 바꿀 수 있고, 바꾼 목록은 이 브라우저에 저장됨
-       cat 은 buy(사고 싶은 것) / have(갖고 싶은 것) / do(하고 싶은 것), emoji 는 룰렛 칸에 크게 보이는 그림 */
+     - rewards : 처음 물레 칸. 화면의 '보상 목록 고치기'에서 바꿀 수 있고, 바꾼 목록은 이 브라우저에 저장됨
+       cat 은 buy(사고 싶은 것) / have(갖고 싶은 것) / do(하고 싶은 것), emoji 는 물레 칸에 크게 보이는 그림 */
   roulette: {
-    boardTitle: "보상 룰렛",
+    boardTitle: "행운의 물레",
     rules: [
       { min: 5, spins: 1 },
       { min: 10, spins: 2 },
@@ -259,7 +271,7 @@ export const siteConfig = {
       { cat: "have", emoji: "💐", text: "나에게 주는 꽃다발" },
       { cat: "do", emoji: "🛌", text: "알람 없이 늦잠 자는 날" },
     ],
-    spinLabel: "룰렛 돌리기",
+    spinLabel: "물레 돌리기",
     winLabel: "당첨!",
     listTitle: "보상 목록",
     historyTitle: "당첨 기록",
@@ -272,8 +284,8 @@ export const siteConfig = {
      - quotes       : 동기부여 한마디. by 에 말한 사람 이름을 적으면 아래에 함께 보여요
      - intervalSec  : 몇 초마다 다음 글로 넘어갈지 */
   interests: {
-    eyebrow: "Growth Letter",
-    title: "오늘의 성장 레터",
+    eyebrow: "Library Post",
+    title: "나에게 온 서신",
     description: "힘이 되는 한마디와 도움이 되는 정보를 모았어요. 잠시 기다리면 다음 글이 보여요.",
     articlesTitle: "관심사 기사",
     noticesTitle: "알아둘 소식",

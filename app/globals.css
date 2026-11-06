@@ -443,6 +443,37 @@
       transform: rotate(5deg) rotateX(-50deg) rotateY(20deg);
     }
   }
+  /* 생각 책 종이 넘기기 (components/sections/thought-book-client.tsx)
+     - turn-next : 오른쪽 쪽이 왼쪽으로 넘어감
+     - turn-prev : 왼쪽 쪽이 오른쪽으로 넘어감
+     - turn-back : (한 쪽 보기) 앞 쪽이 다시 덮이며 돌아옴 */
+  --animate-turn-next: turn-next 0.85s cubic-bezier(0.45, 0.05, 0.25, 1) forwards;
+  @keyframes turn-next {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(-180deg);
+    }
+  }
+  --animate-turn-prev: turn-prev 0.85s cubic-bezier(0.45, 0.05, 0.25, 1) forwards;
+  @keyframes turn-prev {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(180deg);
+    }
+  }
+  --animate-turn-back: turn-back 0.85s cubic-bezier(0.45, 0.05, 0.25, 1) forwards;
+  @keyframes turn-back {
+    from {
+      transform: rotateY(-180deg);
+    }
+    to {
+      transform: rotateY(0deg);
+    }
+  }
   /* 빛 먼지가 천천히 떠올랐다 사라짐 (animate-mote) */
   --animate-mote: mote 12s ease-in-out infinite;
   @keyframes mote {
@@ -502,7 +533,106 @@
   opacity: 1;
   transform: none;
 }
+/* 두루마리가 화면에 들어오면 위에서 아래로 스르륵 펼쳐짐 (components/sections/schedule.tsx)
+   - scroll-unroll : 펼쳐지는 한지 (위에서부터 드러남)
+   - scroll-roller : 아래 나무 축 (한지 끝을 따라 내려옴) */
+[data-reveal] .scroll-unroll {
+  clip-path: inset(0 0 100% 0);
+}
+[data-reveal="in"] .scroll-unroll {
+  clip-path: none;
+  animation: unroll 1.5s cubic-bezier(0.3, 0.7, 0.2, 1) 0.15s backwards;
+}
+[data-reveal] .scroll-roller {
+  top: 0.75rem;
+}
+[data-reveal="in"] .scroll-roller {
+  top: 100%;
+  animation: roll-down 1.5s cubic-bezier(0.3, 0.7, 0.2, 1) 0.15s backwards;
+}
+/* 성취 서가의 창살 문 두 짝: 처음엔 닫혀 있다가 누르면(is-open) 양옆으로 열림 (result-shelf.tsx) */
+.shelf-door-left.is-open {
+  animation: door-open-left 3.6s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+.shelf-door-right.is-open {
+  animation: door-open-right 3.6s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+/* 천천히 열린 뒤(약 1.8초) 잠깐 머물렀다가 스르르 사라짐 */
+@keyframes door-open-left {
+  50% {
+    transform: rotateY(-108deg);
+    opacity: 1;
+  }
+  65% {
+    transform: rotateY(-108deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-108deg);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes door-open-right {
+  50% {
+    transform: rotateY(108deg);
+    opacity: 1;
+  }
+  65% {
+    transform: rotateY(108deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(108deg);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes unroll {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+/* 서가의 성과가 보물함으로 날아감 (result-shelf.tsx) */
+@keyframes fly-to-chest {
+  0% {
+    transform: translate(0, -8px) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translate(30px, -60px) scale(1.15) rotate(-10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(220px, 40px) scale(0.3) rotate(20deg);
+    opacity: 0;
+  }
+}
+@keyframes roll-down {
+  from {
+    top: 0.75rem;
+  }
+  to {
+    top: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .shelf-door {
+    display: none;
+  }
+  [data-reveal] .scroll-unroll {
+    clip-path: none;
+    animation: none;
+  }
+  [data-reveal] .scroll-roller {
+    top: 100%;
+    animation: none;
+  }
   [data-reveal] {
     opacity: 1;
     transform: none;
@@ -528,6 +658,19 @@
       100% 100%,
       96px 96px;
     background-attachment: fixed, scroll;
+  }
+  /* 나무색 얇은 스크롤바 */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--wood) 70%, transparent) transparent;
+  }
+  /* 키보드로 이동할 때만 보이는 또렷한 테두리 (마우스 클릭 땐 안 보임) */
+  :focus-visible {
+    outline: 3px solid color-mix(in oklab, var(--primary) 70%, transparent);
+    outline-offset: 3px;
+  }
+  img {
+    -webkit-user-drag: none;
   }
   ::selection {
     background: color-mix(in oklab, var(--primary) 30%, transparent);

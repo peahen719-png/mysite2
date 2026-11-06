@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/layout/section-header";
 import { Reveal } from "@/components/ui/reveal";
+import { SectionOrnament } from "@/components/ui/section-ornament";
 
 /* 단계 섹션 (생각 → 계획 → 실천 → 결과) 하나.
    - 글자: site.config.ts 의 steps
@@ -14,7 +15,6 @@ import { Reveal } from "@/components/ui/reveal";
    - children: 설명 아래에 넣을 추가 내용 (계획 → 일정표, 실천 → 보드게임)
    - 번호 배지 색은 첫 화면 이정표 표지판과 같은 순서 (파랑 → 청록 → 주황 → 분홍) */
 
-const badgeColors = ["bg-sky", "bg-teal", "bg-orange", "bg-pink"];
 
 export type Step = { key: string; eyebrow: string; title: string; description: string };
 
@@ -49,14 +49,16 @@ export async function StepSection({
         {String(index + 1).padStart(2, "0")}
       </span>
       <Container>
+        {/* 섹션 사이 전통 문양 구분선 */}
+        <SectionOrnament className="mb-14" />
+
         <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-start">
+          {/* 단계 번호패: 나무 판 + 안쪽 테두리 */}
           <div
             aria-hidden
-            className={cn(
-              "flex size-20 shrink-0 -rotate-6 items-center justify-center rounded-2xl border-[2.5px] border-line font-display text-4xl text-card shadow-pop",
-              badgeColors[index % badgeColors.length],
-            )}
+            className="relative flex size-20 shrink-0 -rotate-3 items-center justify-center rounded-xl border-[2.5px] border-line bg-wood font-display text-4xl text-card shadow-pop"
           >
+            <span className="absolute inset-1.5 rounded-lg border-2 border-card/35" />
             {String(index + 1).padStart(2, "0")}
           </div>
           <SectionHeader eyebrow={step.eyebrow} title={step.title} description={step.description} />

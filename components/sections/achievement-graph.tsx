@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { STATUS_EVENT, STATUS_KEY } from "@/components/sections/action-game";
 import { Mascot } from "@/components/ui/mascot";
 import { CountUp } from "@/components/ui/count-up";
+import { Hyeonpan } from "@/components/ui/hyeonpan";
 
 /* 성과 그래프 — 04 결과 섹션 안, 트로피 아래.
    - 왼쪽: 달마다 성공한 실천 개수 막대 그래프 (site.config.ts 의 achievements.months)
@@ -23,6 +24,9 @@ const statusLooks: Record<string, { color: string; Icon: LucideIcon }> = {
 };
 
 type Month = { label: string; value: number };
+
+/* 쌓인 책 표지 색 (차례대로) */
+const bookColors = ["fill-teal", "fill-sky", "fill-yellow", "fill-pink", "fill-wood"];
 type Advice = { Icon: LucideIcon; text: string };
 
 /** 그래프 숫자와 실천 레이스 표시를 보고 조언 몇 줄 만들기 */
@@ -167,13 +171,8 @@ export function AchievementGraph() {
 
   return (
     <div className="relative mt-20">
-      {/* 보라 거리 표지판 제목 */}
-      <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative -rotate-1 rounded-2xl border-[2.5px] border-line bg-primary px-6 py-3 text-center font-display text-xl text-primary-foreground shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
-          {data.boardTitle}
-        </p>
-      </div>
+      {/* 현판 제목 */}
+      <Hyeonpan title={data.boardTitle} tilt="-rotate-1" />
 
       <div className="grid gap-5 rounded-[2rem] border-[3px] border-line bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* ───── 달마다 성공한 실천 (막대) ───── */}
@@ -207,19 +206,42 @@ export function AchievementGraph() {
                 const h = (m.value / top) * plotH;
                 const x = cx - barW / 2;
                 const yb = PAD.top + plotH;
-                const r = Math.min(6, h / 2);
-                const d = `M${x},${yb} V${yb - h + r} Q${x},${yb - h} ${x + r},${yb - h} H${x + barW - r} Q${x + barW},${yb - h} ${x + barW},${yb - h + r} V${yb} Z`;
+                const unitH = plotH / top; // 책 한 권 두께 = 1개
                 return (
                   <g key={m.label}>
-                    <path
-                      d={d}
+                    {/* 막대 = 성공한 개수만큼 쌓인 옛 책 (실로 꿰맨 자국 + 제목 쪽지) */}
+                    <g
                       className={cn(
-                        "origin-bottom fill-primary transition-[transform,opacity] duration-700 ease-out [transform-box:fill-box]",
+                        "origin-bottom transition-[transform,opacity] duration-700 ease-out [transform-box:fill-box]",
                         grown ? "scale-y-100" : "scale-y-0",
                         hover !== null && hover !== i && "opacity-50",
                       )}
                       style={{ transitionDelay: `${i * 90}ms` }}
-                    />
+                    >
+                      {Array.from({ length: m.value }, (_, k) => {
+                        const by = yb - (k + 1) * unitH;
+                        const shift = ((k * 7 + i * 3) % 5) - 2; // 살짝 삐뚤게 쌓기
+                        return (
+                          <g key={k} transform={`translate(${shift} 0)`}>
+                            <rect
+                              x={x}
+                              y={by + 1}
+                              width={barW}
+                              height={unitH - 2}
+                              rx="2"
+                              className={cn(bookColors[(k + i) % bookColors.length], "stroke-line")}
+                              strokeWidth="1.6"
+                            />
+                            {unitH > 12 ? (
+                              <>
+                                <path d={`M${x + 6} ${by + 2} V${by + unitH - 2} M${x + 11} ${by + 2} V${by + unitH - 2}`} className="stroke-primary/70" strokeWidth="1.2" />
+                                <rect x={x + barW * 0.45} y={by + unitH * 0.3} width={barW * 0.35} height={unitH * 0.4} className="fill-card/85" />
+                              </>
+                            ) : null}
+                          </g>
+                        );
+                      })}
+                    </g>
                     {labeled.has(i) ? (
                       <text
                         x={cx}
@@ -267,7 +289,7 @@ export function AchievementGraph() {
 
           {/* 그래프가 알려주는 조언 */}
           {advice.length > 0 ? (
-            <div className="mt-5 rounded-2xl bg-accent/70 p-4">
+            <div className="mt-5 rounded-xl border-2 border-line/25 bg-secondary/60 bg-[repeating-linear-gradient(0deg,transparent_0_31px,color-mix(in_oklab,var(--wood)_12%,transparent)_31px_32px)] p-4">
               <p className="flex items-center gap-1.5 font-display text-base text-foreground">
                 <Lightbulb className="size-5 text-primary" />
                 {data.adviceTitle}
@@ -306,7 +328,10 @@ export function AchievementGraph() {
         <div className="flex flex-col gap-3">
           <div className="lift rounded-2xl border-[2.5px] border-line bg-card p-4 text-center shadow-pop-sm">
             <p className="font-display text-sm text-muted-foreground">{data.rateLabel}</p>
-            <p className="font-display text-5xl text-foreground">{rate === null ? "–" : <CountUp value={rate} suffix="%" />}</p>
+            {/* 붉은 낙관 도장 안에 성공률 */}
+            <p className="mx-auto mt-2 w-fit -rotate-3 rounded-md border-[3px] border-primary px-4 py-1 font-display text-5xl text-primary outline outline-2 outline-offset-2 outline-primary/40">
+              {rate === null ? "–" : <CountUp value={rate} suffix="%" />}
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {marked > 0 ? `${data.statusTitle} ${marked}개 중 성공 ${counts.done ?? 0}개` : data.emptyStatus}
             </p>
@@ -319,7 +344,7 @@ export function AchievementGraph() {
                   key={option.key}
                   className="lift flex items-center gap-2 rounded-2xl border-[2.5px] border-line bg-card p-3 shadow-pop-sm"
                 >
-                  <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-full", look?.color)}>
+                  <span className={cn("flex size-9 shrink-0 -rotate-6 items-center justify-center rounded-md border-2 border-line", look?.color)}>
                     {look ? <look.Icon className="size-5" strokeWidth={3} /> : null}
                   </span>
                   <span className="min-w-0">

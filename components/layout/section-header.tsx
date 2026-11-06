@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 /** 섹션 위쪽의 작은 영문 라벨 + 제목 + 설명. 모든 섹션이 같은 모양을 쓰도록 한 곳에 모아 둠.
     - 라벨: 점이 깜빡이는 작은 알약 모양
-    - 제목: 형광펜으로 칠한 듯한 노란 밑줄 */
+    - 제목: 붓으로 한 번 그은 듯한 붉은 밑줄 */
 export function SectionHeader({
   eyebrow,
   title,
@@ -25,19 +25,25 @@ export function SectionHeader({
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="mt-4 text-4xl leading-tight tracking-tight text-foreground sm:text-5xl">
-        <span
-          className="box-decoration-clone px-1"
-          style={{
-            backgroundImage:
-              "linear-gradient(transparent 62%, color-mix(in oklab, var(--yellow) 75%, transparent) 62%, color-mix(in oklab, var(--yellow) 75%, transparent) 92%, transparent 92%)",
-          }}
-        >
+      <h2 className="mt-4 text-balance text-4xl leading-tight tracking-tight text-foreground sm:text-5xl">
+        <span className="relative inline-block">
           {title}
+          {/* 붓으로 한 번 그은 밑줄 */}
+          <svg
+            aria-hidden
+            viewBox="0 0 200 14"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute -bottom-2 left-0 h-3 w-full"
+          >
+            <path
+              d="M2 9 C40 3 80 4 120 6 C150 7 175 5 198 3 C176 10 140 11 110 11 C70 12 30 12 4 12 Z"
+              className="fill-primary/60"
+            />
+          </svg>
         </span>
       </h2>
       {description ? (
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
       ) : null}
     </div>
   );

@@ -11,7 +11,7 @@ import { TypewriterText } from "@/components/ui/typewriter-text";
 import { LightMotes } from "@/components/ui/light-motes";
 import { LivingPicture } from "@/components/ui/living-picture";
 
-/* 첫 화면(히어로) — 한옥 도서관 그림(site.config.ts 의 libraryImage)을 옅게 깐 배경 위의 3D 이정표.
+/* 첫 화면(히어로) — 사모예드 동영상(site.config.ts 의 heroVideo)이 옅게 흐르는 배경 위의 3D 이정표.
    - 글자는 관리자 페이지(/admin → 히어로 글자)에서 바꿉니다.
      저장한 적 없는 칸은 site.config.ts 의 hero 글자가 보입니다.
    - 버튼 주소(href)와 이정표 글자(decor)는 site.config.ts 에서 바꿉니다.
@@ -50,11 +50,15 @@ export async function Hero() {
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         {/* 그림은 오른쪽으로 치우쳐 깔아서 사모예드가 제목과 겹치지 않게. 천천히 움직이고 잎이 떨어짐 */}
         <LivingPicture
-          src={siteConfig.libraryImage}
+          frames={siteConfig.libraryFrames.map((f) => f.src)}
+          video={siteConfig.heroVideo}
+          focus="62% 35%"
           className="inset-y-0 right-0 w-full lg:w-[78%]"
           imageClassName="opacity-50"
         />
         <div className="absolute inset-0 bg-linear-to-r from-background via-background/70 to-background/0" />
+        {/* 휴대폰: 글자가 그림 위에 겹치므로 한 겹 더 옅게 */}
+        <div className="absolute inset-0 bg-background/55 lg:hidden" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-linear-to-b from-transparent to-background" />
         <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-background/80 to-transparent" />
       </div>

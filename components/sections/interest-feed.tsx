@@ -3,6 +3,7 @@ import { searchNews, shuffle } from "@/lib/news";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/layout/section-header";
 import { Reveal } from "@/components/ui/reveal";
+import { SectionOrnament } from "@/components/ui/section-ornament";
 import { InterestRotator } from "@/components/sections/interest-rotator";
 
 /* 관심사 소식함 — 맨 아래 섹션 (예전 '연락처' 자리).
@@ -30,6 +31,7 @@ export async function InterestFeed() {
   return (
     <section id="news" className="scroll-mt-24 bg-linear-to-b from-transparent via-muted/60 to-muted/40 py-24 sm:py-28">
       <Container>
+        <SectionOrnament className="mb-14" />
         <Reveal>
           <SectionHeader eyebrow={data.eyebrow} title={data.title} description={data.description} />
         </Reveal>

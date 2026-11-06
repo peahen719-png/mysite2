@@ -7,7 +7,7 @@ import { siteConfig } from "@/site.config";
 import { cn } from "@/lib/utils";
 import type { NewsItem } from "@/lib/news";
 
-/* 오늘의 성장 레터 — 세 장의 카드 (관심사 기사 / 알아둘 소식 / 오늘의 한마디).
+/* 도서관에 도착한 서신 — 세 통의 편지 카드 (관심사 기사 / 알아둘 소식 / 오늘의 한마디).
    - 세 카드 모두 같은 모양: 위에 아이콘·제목·"3 / 23" 쪽수와 ‹ › 넘김 단추, 아래 내용
    - 몇 초마다 다음 글이 아래에서 스르륵 올라옴 (세 카드 모두 같은 움직임, 서로 조금씩 시간차)
    - 마우스를 올리면 잠깐 멈춤
@@ -46,15 +46,23 @@ function LetterCard({
 }) {
   return (
     <div
-      className="lift flex min-h-[15rem] flex-col rounded-[1.75rem] border-[2.5px] border-line bg-card p-5 shadow-pop-sm sm:p-6"
+      className="lift relative flex min-h-[15rem] flex-col rounded-md border-[2.5px] border-line bg-card bg-[repeating-linear-gradient(0deg,transparent_0_31px,color-mix(in_oklab,var(--wood)_9%,transparent)_31px_32px)] p-5 pt-9 shadow-pop-sm sm:p-6 sm:pt-10"
       onMouseEnter={() => rotation.setPaused(true)}
       onMouseLeave={() => rotation.setPaused(false)}
       onFocus={() => rotation.setPaused(true)}
       onBlur={() => rotation.setPaused(false)}
     >
+      {/* 편지 봉투 덮개 (위쪽 V자) + 가운데 붉은 밀랍 도장 */}
+      <svg aria-hidden viewBox="0 0 100 20" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 top-0 h-7 w-full">
+        <path d="M0 0 L50 18 L100 0 Z" className="fill-secondary stroke-line/50" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+      </svg>
+      <span aria-hidden className="absolute left-1/2 top-3 size-6 -translate-x-1/2 rounded-full border-2 border-line bg-primary shadow-sm">
+        <span className="absolute inset-1 rounded-full border border-card/50" />
+      </span>
+
       {/* 머리: 아이콘 + 제목 + 쪽수 + 넘김 단추 */}
       <div className="flex items-center gap-2.5 border-b-2 border-dashed border-border pb-3">
-        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-full text-card", iconBg)}>
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-line text-card", iconBg)}>
           <Icon className="size-5" />
         </span>
         <p className="flex-1 font-display text-lg text-foreground">{title}</p>

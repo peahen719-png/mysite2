@@ -66,7 +66,7 @@ export function Navbar() {
         )}
       >
         <Container className="flex h-14 items-center justify-between sm:px-6">
-          <Link href="/" className="font-display text-2xl">
+          <Link href="/" className="font-display text-2xl" aria-label={`${siteConfig.name} 처음으로`}>
             <BouncyText text={siteConfig.name} />
           </Link>
 

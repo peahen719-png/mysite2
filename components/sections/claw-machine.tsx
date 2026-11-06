@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { TrophyFountain } from "@/components/ui/trophy-fountain";
 import { AchievementArt, artFor } from "@/components/ui/achievement-art";
 import { Mascot } from "@/components/ui/mascot";
+import { Hyeonpan } from "@/components/ui/hyeonpan";
 
 /* 나의 성과 자판기 — 04 결과 섹션 안에 들어가는 '집게 자판기' + 옆의 성과 트로피.
    ('북페어링' 포스터처럼 상품이 진열된 자판기에, 위 레일을 따라 움직이는 집게가 달려 있음)
@@ -116,13 +117,8 @@ export function ClawMachine({ prizes }: { prizes: string[] }) {
 
   return (
     <div className="relative mt-20">
-      {/* 분홍 거리 표지판 제목 — 자판기와 트로피 전체의 가운데 위 */}
-      <div className="absolute inset-x-0 -top-8 z-20 flex justify-center px-4">
-        <p className="relative -rotate-1 rounded-2xl border-[2.5px] border-line bg-pink px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
-          {game.title}
-        </p>
-      </div>
+      {/* 현판 제목 */}
+      <Hyeonpan title={game.title} tilt="-rotate-1" />
 
       <div className="relative rounded-[2rem] border-[3px] border-line bg-card/50 p-4 pt-14 shadow-pop backdrop-blur sm:p-8 sm:pt-16">
         <div className="relative grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_17rem]">

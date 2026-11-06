@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
 /* 살아 움직이는 그림 (첫 화면 배경의 한옥 도서관 그림).
    - 아주 천천히 다가갔다 물러나는 카메라 (animate-kenburns)
+   - video 가 있으면 소리 없는 동영상이 계속 반복 재생됨 (첫 화면)
+   - 없으면 장면(frames) 여러 장이 몇 초마다 천천히 겹쳐 바뀜 → 그림이 움직이는 것처럼 보임 (useFrameIndex)
    - 마우스를 움직이면 그림이 살짝 따라 움직임 (깊이감)
    - 창으로 들어오는 햇살 줄기가 은은하게 일렁임 (animate-beam)
    - 오른쪽 위 단풍나무 쪽에서 잎이 팔랑팔랑 떨어짐 (animate-flutter)
@@ -32,18 +34,41 @@ const leaves = Array.from({ length: 14 }, (_, i) => ({
   color: leafColors[i % leafColors.length],
 }));
 
+/** 장면 번호를 ms 마다 하나씩 넘김 (움직임 줄이기 설정이면 첫 장면에 멈춤) */
+export function useFrameIndex(count: number, ms = 3800) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setInterval(() => setIndex((i) => (i + 1) % count), ms);
+    return () => clearInterval(timer);
+  }, [count, ms]);
+  return index;
+}
+
 export function LivingPicture({
-  src,
+  frames,
+  video,
   focus = "55% 40%",
   className,
   imageClassName,
 }: {
-  src: string;
+  /** 차례로 겹쳐 바뀔 장면 그림들 (video 가 있으면 첫 장은 동영상이 뜨기 전 잠깐 보이는 그림) */
+  frames: string[];
+  /** 배경 동영상 (소리 없이 자동 반복). 움직임 줄이기 설정이면 동영상 대신 그림 */
+  video?: string;
   focus?: string;
   className?: string;
   imageClassName?: string;
 }) {
   const layer = useRef<HTMLDivElement>(null);
+  const current = useFrameIndex(video ? 0 : frames.length);
+  const [still, setStill] = useState(false); // 움직임 줄이기 설정이면 동영상 대신 멈춘 그림
+
+  useEffect(() => {
+    if (!video) return;
+    const timer = setTimeout(() => setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches), 0);
+    return () => clearTimeout(timer);
+  }, [video]);
 
   // 마우스 위치에 따라 그림을 살짝 반대로 움직임
   useEffect(() => {
@@ -73,7 +98,35 @@ export function LivingPicture({
       <div ref={layer} className="absolute -inset-6 transition-transform duration-700 ease-out">
         {/* 천천히 다가갔다 물러나는 카메라 */}
         <div className="absolute inset-0 animate-kenburns motion-reduce:animate-none">
-          <Image src={src} alt="" fill priority sizes="100vw" className={cn("object-cover", imageClassName)} style={{ objectPosition: focus }} />
+          {video && !still ? (
+            <video
+              src={video}
+              poster={frames[0]}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className={cn("absolute inset-0 size-full object-cover", imageClassName)}
+              style={{ objectPosition: focus }}
+            />
+          ) : null}
+          {(video && !still ? [] : frames).map((src, k) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              priority={k === 0}
+              sizes="100vw"
+              className={cn(
+                "object-cover transition-opacity duration-[2200ms] ease-in-out",
+                k === current ? "opacity-100" : "opacity-0",
+                imageClassName,
+              )}
+              style={{ objectPosition: focus }}
+            />
+          ))}
         </div>
       </div>
 

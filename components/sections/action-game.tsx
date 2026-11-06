@@ -10,6 +10,7 @@ import { Celebration } from "@/components/ui/celebration";
 import { StatusBurst } from "@/components/ui/status-burst";
 import { PuzzleArt } from "@/components/ui/puzzle-art";
 import { Buddy } from "@/components/ui/mascot";
+import { Hyeonpan } from "@/components/ui/hyeonpan";
 
 /* 실천 레이스 — 03 실천 섹션 안에 들어가는 직소 퍼즐 놀이판.
    - 칸 = 퍼즐 조각. 조각마다 공원 보물 지도(components/ui/puzzle-art.tsx)가 옅게 깔려 있고,
@@ -176,13 +177,8 @@ export function ActionGame() {
 
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
-      {/* 주황 거리 표지판 제목 */}
-      <div className="absolute inset-x-0 -top-8 z-30 flex justify-center px-4">
-        <p className="relative rotate-1 rounded-2xl border-[2.5px] border-line bg-orange px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
-          <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-line/70" />
-          {game.boardTitle}
-        </p>
-      </div>
+      {/* 현판 제목 */}
+      <Hyeonpan title={game.boardTitle} tilt="rotate-1" />
 
       <div className="rounded-[2rem] border-[3px] border-line bg-linear-to-br from-secondary to-muted p-3 pt-12 shadow-pop sm:p-6 sm:pt-14">
         {/* 결과 표시 고르기 (캐릭터가 있는 칸에 적용) */}
@@ -253,7 +249,7 @@ export function ActionGame() {
                   aria-hidden
                   className={cn(
                     "pointer-events-none absolute block transition-[opacity,filter] duration-700",
-                    vivid ? "opacity-100 saturate-[1.15]" : "opacity-30 grayscale-[50%]",
+                    vivid ? "opacity-100 saturate-[1.1]" : "opacity-45 grayscale sepia-[0.35]",
                   )}
                   style={{ width: `${(COLS * 100) / w}cqw`, height: `${ROWS * 100}cqh`, left, top }}
                 >
