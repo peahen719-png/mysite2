@@ -1,0 +1,4 @@
+# Vercel 로 올릴 때 빼는 파일 (비밀 키·만들어진 파일)
+.env*
+.next
+node_modules
