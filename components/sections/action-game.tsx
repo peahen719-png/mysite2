@@ -1,107 +1,87 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Pause, PartyPopper, RotateCcw, RotateCw, Sparkles, X, type LucideIcon } from "lucide-react";
+import { Check, Flag, Pause, PartyPopper, Puzzle, RotateCcw, RotateCw, type LucideIcon } from "lucide-react";
 
 import { siteConfig } from "@/site.config";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Celebration } from "@/components/ui/celebration";
+import { StatusBurst } from "@/components/ui/status-burst";
+import { PuzzleArt } from "@/components/ui/puzzle-art";
+import { Buddy } from "@/components/ui/mascot";
 
-/* 실천 레이스 — 03 실천 섹션 안에 들어가는 놀이판.
-   - 칸 20개(0 = 출발, 19 = 도착)가 위에서 아래로 뱀처럼 이어짐
-   - 주사위 없이, 칸을 누르면 내 캐릭터 말이 그 칸으로 폴짝 이동 (지금 하는 실천 계획 표시)
-   - 캐릭터가 있는 칸에 결과 표시(성공·보류·재도전·취소)를 붙일 수 있음
-   - 말 위치와 결과 표시는 이 브라우저에 기억됨 (다시 와도 그대로)
-   - 글자, 미션, 사다리 위치: site.config.ts 의 actionGame
-   - 색: 사이트 토큰 (미션 칸 = 표지판 색, 위로 사다리 = 주황, 아래로 사다리 = 분홍) */
+/* 실천 레이스 — 03 실천 섹션 안에 들어가는 직소 퍼즐 놀이판.
+   - 칸 = 퍼즐 조각. 조각마다 공원 보물 지도(components/ui/puzzle-art.tsx)가 옅게 깔려 있고,
+     '성공'으로 표시한 조각은 지도가 선명해져
+     15칸을 모두 성공하면 그림이 완성됨
+   - 출발 → 1~15번 칸 → 도착이 위에서 아래로 뱀처럼 이어짐 (6·9·13번은 넓은 조각)
+   - 칸을 누르면 내 캐릭터 말이 그 칸으로 폴짝 이동 (지금 하는 실천 계획 표시)
+   - 위쪽 '결과 표시' 줄에서 성공(빨강)·보류(노랑)·재도전(초록)을 고르면
+     캐릭터가 있는 칸의 색이 바뀌고, 숫자 자리에 큰 도장이 찍히며 응원이 팡팡
+     (성공 = 폭죽 + "최고야!", 보류 = "화이팅!", 재도전 = "다시 해보자!")
+   - 캐릭터가 있는 칸에는 위쪽 '○번 칸 할 일' 칸에 직접 글을 적을 수 있음
+   - 말 위치, 결과 표시, 적은 글은 이 브라우저에 기억됨 (다시 와도 그대로)
+   - 글자, 실천 계획, 결과 이름: site.config.ts 의 actionGame */
 
 const COLS = 5;
 const ROWS = 4;
-const GOAL = COLS * ROWS - 1;
+/* 칸: 0 = 출발, 1~15 = 숫자 칸, 16 = 도착.
+   20자리(5 × 4)에 17칸을 놓으려고 6·9·13번(할 일 칸)은 두 자리를 합친 넓은 조각 */
+const GOAL = 16;
+const WIDE: Record<number, number> = { 6: 2, 9: 2, 13: 2 };
 
 const STORAGE_KEY = "haeboja-race-position";
-const STATUS_KEY = "haeboja-race-status";
+const TEXTS_KEY = "haeboja-race-texts"; // 칸마다 직접 적은 할 일
+export const STATUS_KEY = "haeboja-race-status";
+/** 결과 표시가 바뀌면 알리는 신호 (성과 그래프가 듣고 다시 그림) */
+export const STATUS_EVENT = "haeboja-race-updated";
 
-/* 결과 표시 모양 (글자는 site.config.ts 의 actionGame.statuses) */
-const statusLooks: Record<string, { color: string; Icon: LucideIcon }> = {
-  done: { color: "bg-teal", Icon: Check },
-  hold: { color: "bg-orange", Icon: Pause },
-  retry: { color: "bg-sky", Icon: RotateCw },
-  cancel: { color: "bg-pink", Icon: X },
+/* 결과 표시 모양: 칸 색, 칸 글자색, 도장 아이콘 색 (글자는 site.config.ts 의 actionGame.statuses)
+   성공 = 파스텔 빨강, 보류 = 파스텔 노랑, 재도전 = 파스텔 초록 */
+const statusLooks: Record<string, { tile: string; ink: string; text: string; Icon: LucideIcon }> = {
+  done: { tile: "bg-red", ink: "text-foreground", text: "text-red-deep", Icon: Check },
+  hold: { tile: "bg-yellow", ink: "text-foreground", text: "text-yellow-deep", Icon: Pause },
+  retry: { tile: "bg-green", ink: "text-foreground", text: "text-green-deep", Icon: RotateCw },
 };
 
-/* 미션 칸의 색과 모양 (차례대로 돌아가며) */
-const missionStyles = [
-  { color: "bg-teal text-card", shape: "rounded-[42%]" }, // 구름
-  { color: "bg-orange text-card", shape: "rounded-[1.75rem_1.75rem_1.75rem_0.4rem]" }, // 말풍선
-  { color: "bg-sky text-card", shape: "rounded-[50%_50%_45%_45%/60%_60%_40%_40%]" }, // 동글
-  { color: "bg-pink text-card", shape: "rounded-[1.75rem_0.4rem_1.75rem_1.75rem]" }, // 말풍선
-];
+/* 실천 계획 칸의 번호 색 (차례대로 돌아가며) */
+const numberColors = ["bg-teal", "bg-orange", "bg-sky", "bg-pink"];
 
-/** 칸 번호 → 놀이판 위치 (열, 위에서부터의 줄). 줄마다 방향이 바뀜 (출발 = 왼쪽 위, 도착 = 왼쪽 아래) */
+/** 칸마다 놀이판 위치 (열, 위에서부터의 줄, 차지하는 자리 수 w).
+    줄마다 방향이 바뀜 (출발 = 왼쪽 위 → … → 도착 = 왼쪽 아래) */
+const LAYOUT = (() => {
+  const places: { col: number; row: number; w: number }[] = [];
+  let row = 0;
+  let used = 0;
+  for (let i = 0; i <= GOAL; i++) {
+    const w = WIDE[i] ?? 1;
+    if (used + w > COLS) {
+      row += 1;
+      used = 0;
+    }
+    const col = row % 2 === 0 ? used : COLS - used - w;
+    places.push({ col, row, w });
+    used += w;
+  }
+  return places;
+})();
+
 function cellPlace(i: number) {
-  const row = Math.floor(i / COLS);
-  const col = row % 2 === 0 ? i % COLS : COLS - 1 - (i % COLS);
-  return { col, row };
+  return LAYOUT[i];
 }
 
 /** 칸 중심 좌표 (가로 0~500, 세로 0~400 기준 — 그림 좌표) */
 function cellCenter(i: number) {
-  const { col, row } = cellPlace(i);
-  return { x: (col + 0.5) * 100, y: (row + 0.5) * 100 };
+  const { col, row, w } = cellPlace(i);
+  return { x: (col + w / 2) * 100, y: (row + 0.5) * 100 };
 }
 
-/** 두 칸 사이의 사다리 그림 (기둥 2개 + 가로대) */
-function Ladder({ from, to }: { from: number; to: number }) {
-  const a = cellCenter(from);
-  const b = cellCenter(to);
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len = Math.hypot(dx, dy);
-  const nx = (-dy / len) * 11;
-  const ny = (dx / len) * 11;
-  const rungs = Math.floor(len / 24);
-  const up = to > from;
-
-  return (
-    <g className={up ? "stroke-orange" : "stroke-pink"} strokeWidth="5" strokeLinecap="round">
-      <line x1={a.x + nx} y1={a.y + ny} x2={b.x + nx} y2={b.y + ny} />
-      <line x1={a.x - nx} y1={a.y - ny} x2={b.x - nx} y2={b.y - ny} />
-      {Array.from({ length: rungs }, (_, k) => {
-        const t = (k + 1) / (rungs + 1);
-        const x = a.x + dx * t;
-        const y = a.y + dy * t;
-        return <line key={k} x1={x + nx} y1={y + ny} x2={x - nx} y2={y - ny} strokeWidth="4" />;
-      })}
-    </g>
-  );
-}
-
-/** 내 캐릭터 말: 보라색 동글이 + 새싹, 눈·볼·웃는 입 */
-function CharacterPiece() {
-  return (
-    <div className="flex flex-col items-center">
-      {/* 새싹 */}
-      <span className="-mb-1 h-3 w-3 rotate-45 rounded-br-full rounded-tl-full border-2 border-card bg-teal sm:h-4 sm:w-4" />
-      <div className="relative aspect-square w-full rounded-[46%_46%_40%_40%] border-4 border-card bg-primary shadow-pop">
-        {/* 눈 */}
-        <span className="absolute left-[24%] top-[30%] flex size-[20%] items-center justify-center rounded-full bg-card">
-          <span className="size-1/2 rounded-full bg-foreground" />
-        </span>
-        <span className="absolute right-[24%] top-[30%] flex size-[20%] items-center justify-center rounded-full bg-card">
-          <span className="size-1/2 rounded-full bg-foreground" />
-        </span>
-        {/* 볼 */}
-        <span className="absolute left-[10%] top-[56%] h-[12%] w-[18%] rounded-full bg-pink/80" />
-        <span className="absolute right-[10%] top-[56%] h-[12%] w-[18%] rounded-full bg-pink/80" />
-        {/* 웃는 입 */}
-        <span className="absolute left-1/2 top-[55%] h-[14%] w-[22%] -translate-x-1/2 rounded-b-full border-b-[3px] border-card" />
-      </div>
-      {/* 바닥 그림자 */}
-      <span className="mt-0.5 h-1.5 w-3/4 rounded-full bg-foreground/15" />
-    </div>
-  );
-}
+/** 지도 위 점선 길: 출발 → 도착까지 칸 가운데를 차례로 잇기 */
+const ROUTE = LAYOUT.map((_, i) => {
+  const c = cellCenter(i);
+  return `${c.x},${c.y}`;
+}).join(" ");
 
 export function ActionGame() {
   const game = siteConfig.actionGame;
@@ -109,10 +89,29 @@ export function ActionGame() {
   const [hop, setHop] = useState(0); // 놓을 때마다 1씩 늘려 폴짝 움직임을 다시 보여줌
   const [message, setMessage] = useState(game.hint);
   const [statuses, setStatuses] = useState<Record<number, string>>({});
+  const [texts, setTexts] = useState<Record<number, string>>({}); // 직접 적은 할 일 (빈 글자 = 지움)
+  const [burst, setBurst] = useState<{ key: number; tile: number; kind: string } | null>(null); // 응원이 터질 칸
 
-  const missionAt = (tile: number) => game.missions.find((m) => m.tile === tile);
+  /** 칸의 할 일: 직접 적은 게 있으면 그것, 없으면 site.config.ts 의 missions */
+  const missionAt = (tile: number) => {
+    if (tile <= 0 || tile >= GOAL) return undefined;
+    const text = texts[tile] !== undefined ? texts[tile] : game.missions.find((m) => m.tile === tile)?.text;
+    return text ? { tile, text } : undefined;
+  };
 
-  // 지난번에 놓아 둔 위치 불러오기
+  function writeText(tile: number, value: string) {
+    const next = { ...texts, [tile]: value };
+    setTexts(next);
+    try {
+      window.localStorage.setItem(TEXTS_KEY, JSON.stringify(next));
+    } catch {
+      // 기억 못 해도 괜찮아요
+    }
+  }
+  const canMark = pos > 0 && pos < GOAL;
+  const doneCount = Object.entries(statuses).filter(([k, v]) => v === "done" && Number(k) > 0 && Number(k) < GOAL).length;
+
+  // 지난번에 놓아 둔 위치와 결과 표시 불러오기
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
@@ -120,8 +119,10 @@ export function ActionGame() {
         if (Number.isInteger(saved) && saved > 0 && saved <= GOAL) setPos(saved);
         const savedStatus = JSON.parse(window.localStorage.getItem(STATUS_KEY) ?? "{}");
         if (savedStatus && typeof savedStatus === "object") setStatuses(savedStatus);
+        const savedTexts = JSON.parse(window.localStorage.getItem(TEXTS_KEY) ?? "{}");
+        if (savedTexts && typeof savedTexts === "object") setTexts(savedTexts);
       } catch {
-        // 저장 공간을 못 쓰는 브라우저면 출발에서 시작
+        // 저장 공간을 못 쓰는 브라우저면 처음 상태로 시작
       }
     }, 0);
     return () => clearTimeout(timer);
@@ -136,41 +137,47 @@ export function ActionGame() {
       // 기억 못 해도 괜찮아요
     }
     const mission = missionAt(i);
-    const jump = game.jumps.find((j) => j.from === i);
     if (i === 0) setMessage(game.hint);
     else if (i === GOAL) setMessage(game.goalMessage);
-    else if (mission) setMessage(`${i}번 칸 “${mission.text}” 실천 중! 화이팅!`);
-    else if (jump && jump.to > jump.from) setMessage(`${i}번 칸! ${game.upText}`);
+    else if (mission) setMessage(`${i}번 칸 “${mission.text}” 실천 중! 위에서 결과를 표시해 보세요.`);
     else setMessage(`${i}번 칸에 캐릭터를 놓았어요.`);
   }
 
   /** 지금 캐릭터가 있는 칸에 결과 표시 붙이기 (같은 걸 다시 누르면 떼기) */
   function mark(key: string) {
+    if (!canMark) return;
     const next = { ...statuses };
     const option = game.statuses.find((o) => o.key === key);
+    const mission = missionAt(pos);
     if (next[pos] === key) {
       delete next[pos];
       setMessage(`${pos}번 칸의 표시를 지웠어요.`);
     } else {
       next[pos] = key;
-      const mission = missionAt(pos);
-      setMessage(`${mission ? `“${mission.text}”` : `${pos}번 칸`} → ${option?.label ?? ""}`);
+      const solved = Object.entries(next).filter(([k, v]) => v === "done" && Number(k) > 0 && Number(k) < GOAL).length;
+      setMessage(
+        key === "done" && solved === GOAL - 1
+          ? game.puzzleDoneMessage
+          : `${mission ? `“${mission.text}”` : `${pos}번 칸`} → ${option?.label ?? ""}!`,
+      );
+      setBurst((b) => ({ key: (b?.key ?? 0) + 1, tile: pos, kind: key })); // 응원 팡팡!
     }
     setStatuses(next);
     try {
       window.localStorage.setItem(STATUS_KEY, JSON.stringify(next));
+      window.dispatchEvent(new Event(STATUS_EVENT));
     } catch {
       // 기억 못 해도 괜찮아요
     }
   }
 
   const token = cellCenter(pos);
-  const canMark = pos > 0 && pos < GOAL;
+  const burstPlace = burst ? cellPlace(burst.tile) : null;
 
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
       {/* 주황 거리 표지판 제목 */}
-      <div className="absolute inset-x-0 -top-8 z-10 flex justify-center px-4">
+      <div className="absolute inset-x-0 -top-8 z-30 flex justify-center px-4">
         <p className="relative rotate-1 rounded-2xl border-4 border-card bg-orange px-6 py-3 text-center font-display text-xl text-card shadow-pop sm:px-10 sm:text-3xl">
           <span aria-hidden className="absolute inset-1.5 rounded-xl border-2 border-card/70" />
           {game.boardTitle}
@@ -178,162 +185,231 @@ export function ActionGame() {
       </div>
 
       <div className="rounded-[2rem] border-[6px] border-card bg-linear-to-br from-secondary to-muted p-3 pt-12 shadow-pop sm:p-6 sm:pt-14">
-        {/* 놀이판 (가로:세로 = 5:4) */}
-        <div className="relative aspect-[5/4] w-full" role="group" aria-label={`${game.boardTitle}. 지금 ${pos}번 칸`}>
-          {/* 길과 사다리 */}
-          <svg
-            aria-hidden
-            viewBox="0 0 500 400"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-0 size-full"
-          >
-            <polyline
-              points={Array.from({ length: GOAL + 1 }, (_, i) => {
-                const c = cellCenter(i);
-                return `${c.x},${c.y}`;
-              }).join(" ")}
-              fill="none"
-              className="stroke-card"
-              strokeWidth="38"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <polyline
-              points={Array.from({ length: GOAL + 1 }, (_, i) => {
-                const c = cellCenter(i);
-                return `${c.x},${c.y}`;
-              }).join(" ")}
-              fill="none"
-              className="stroke-primary/25"
-              strokeWidth="3"
-              strokeDasharray="8 10"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          {/* 칸 */}
-          {Array.from({ length: GOAL + 1 }, (_, i) => {
-            const { col, row } = cellPlace(i);
-            const mission = missionAt(i);
-            const missionIndex = mission ? game.missions.indexOf(mission) : -1;
-            const style = missionIndex >= 0 ? missionStyles[missionIndex % missionStyles.length] : null;
-            const here = pos === i;
-            const status = statuses[i];
-            const statusLook = status ? statusLooks[status] : null;
-            const statusLabel = game.statuses.find((o) => o.key === status)?.label;
-
-            let content;
-            let look;
-            if (i === 0) {
-              look = "bg-pink text-pink-foreground rounded-[45%]";
-              content = (
-                <>
-                  <span className="absolute -right-1 -top-2 rounded-full border-2 border-card bg-accent px-1.5 font-display text-[10px] text-accent-foreground sm:text-xs">
-                    GO!
-                  </span>
-                  <span className="font-display text-lg sm:text-3xl">{game.startLabel}</span>
-                </>
-              );
-            } else if (i === GOAL) {
-              look = "bg-primary text-primary-foreground rounded-2xl";
-              content = (
-                <>
-                  <PartyPopper className="size-5 sm:size-8" />
-                  <span className="font-display text-lg sm:text-3xl">{game.goalLabel}</span>
-                </>
-              );
-            } else if (mission && style) {
-              look = cn(style.color, style.shape);
-              content = (
-                <>
-                  <span className="font-display text-sm opacity-80 sm:text-base">{i}</span>
-                  <Sparkles className="size-4 sm:hidden" />
-                  <span className="hidden px-1 text-center font-display text-xs leading-tight sm:block lg:text-sm">
-                    {mission.text}
-                  </span>
-                </>
-              );
-            } else {
-              look = "bg-card text-foreground/70 rounded-2xl";
-              content = <span className="font-display text-xl sm:text-3xl">{i}</span>;
-            }
-
+        {/* 결과 표시 고르기 (캐릭터가 있는 칸에 적용) */}
+        <div className="mb-5 flex flex-wrap items-center justify-center gap-2 rounded-2xl border-4 border-card bg-card/80 px-4 py-3">
+          <span className="mr-1 font-display text-sm text-foreground sm:text-base">
+            {canMark ? `${pos}번 칸 ${game.statusPrompt}` : game.statusHint}
+          </span>
+          {game.statuses.map((option) => {
+            const look = statusLooks[option.key];
+            const active = canMark && statuses[pos] === option.key;
             return (
               <button
-                key={i}
+                key={option.key}
                 type="button"
-                onClick={() => place(i)}
-                aria-pressed={here}
-                aria-label={`${i === 0 ? game.startLabel : i === GOAL ? game.goalLabel : `${i}번 칸`}${mission ? ` ${mission.text}` : ""}${statusLabel ? ` (${statusLabel})` : ""}에 캐릭터 놓기`}
-                className="group/tile absolute cursor-pointer rounded-2xl p-1 outline-none sm:p-2.5 lg:p-3"
-                style={{
-                  left: `${(col / COLS) * 100}%`,
-                  top: `${(row / ROWS) * 100}%`,
-                  width: `${100 / COLS}%`,
-                  height: `${100 / ROWS}%`,
-                }}
+                onClick={() => mark(option.key)}
+                disabled={!canMark}
+                aria-pressed={active}
+                className={cn(
+                  "flex items-center gap-1 rounded-full border-4 border-card px-3 py-1 font-display text-sm shadow-pop-sm transition-transform enabled:hover:-translate-y-0.5 disabled:opacity-40 sm:text-base",
+                  active ? cn(look?.tile, look?.ink) : "bg-card text-foreground",
+                )}
               >
-                <div
-                  className={cn(
-                    "relative flex size-full flex-col items-center justify-center gap-0.5 border-4 border-card shadow-pop-sm transition-transform group-hover/tile:-translate-y-1 group-focus-visible/tile:ring-4 group-focus-visible/tile:ring-ring",
-                    look,
-                    here && "scale-105 ring-4 ring-primary/40",
-                    status === "cancel" && "opacity-55 grayscale",
-                  )}
-                >
-                  {content}
-                </div>
-                {/* 결과 표시 도장 */}
-                {statusLook ? (
-                  <span
-                    className={cn(
-                      "absolute -right-1 -top-1 z-10 flex -rotate-6 items-center gap-0.5 rounded-full border-2 border-card px-1 py-0.5 font-display text-[10px] text-card shadow-pop-sm sm:-right-3 sm:-top-3 sm:px-2.5 sm:text-sm",
-                      statusLook.color,
-                    )}
-                  >
-                    <statusLook.Icon className="size-3 sm:size-4" strokeWidth={3} />
-                    <span className="hidden sm:inline">{statusLabel}</span>
-                  </span>
-                ) : null}
+                {look ? <look.Icon className="size-4" strokeWidth={3} /> : null}
+                {option.label}
               </button>
             );
           })}
+          <span className="ml-1 flex items-center gap-1 rounded-full bg-accent px-3 py-1 font-display text-sm text-accent-foreground">
+            <Puzzle className="size-4 text-primary" />
+            {doneCount}/{GOAL - 1}
+          </span>
+          {/* 캐릭터가 있는 칸에 할 일 적기 */}
+          {canMark ? (
+            <label className="flex w-full items-center gap-2 border-t-2 border-dashed border-border pt-3">
+              <span className="shrink-0 font-display text-sm text-foreground">{pos}번 칸 할 일</span>
+              <input
+                value={missionAt(pos)?.text ?? ""}
+                onChange={(e) => writeText(pos, e.target.value)}
+                placeholder={game.textPlaceholder}
+                maxLength={20}
+                aria-label={`${pos}번 칸 할 일`}
+                className="h-10 min-w-0 flex-1 rounded-xl border-2 bg-background px-3 text-sm outline-none focus:border-primary"
+              />
+            </label>
+          ) : null}
+        </div>
 
-          {/* 사다리 (칸 위에 그려서 잘 보이게) */}
-          <svg
-            aria-hidden
-            viewBox="0 0 500 400"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-0 size-full"
-          >
-            {game.jumps.map((j) => (
-              <Ladder key={`${j.from}-${j.to}`} from={j.from} to={j.to} />
-            ))}
-          </svg>
-          {game.jumps.map((j) => {
-            const a = cellCenter(j.from);
-            const b = cellCenter(j.to);
-            return (
-              <span
-                key={`label-${j.from}`}
-                aria-hidden
-                className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border-2 border-card bg-card px-2 py-0.5 font-display text-[10px] text-foreground shadow-pop-sm sm:text-sm"
-                style={{ left: `${(a.x + b.x) / 10}%`, top: `${(a.y + b.y) / 8}%` }}
-              >
-                {j.to > j.from ? game.upText : game.downText}
-              </span>
-            );
-          })}
+        {/* 놀이판: 직소 퍼즐 (가로:세로 = 5:4). 성공한 칸마다 그림 조각이 드러남 */}
+        <div className="relative aspect-[5/4] w-full" role="group" aria-label={`${game.boardTitle}. 지금 ${pos}번 칸`}>
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-card shadow-pop-sm">
+            {Array.from({ length: GOAL + 1 }, (_, i) => {
+              const { col, row, w } = cellPlace(i);
+              const mission = missionAt(i);
+              const here = pos === i;
+              const status = i > 0 && i < GOAL ? statuses[i] : undefined;
+              const statusLook = status ? statusLooks[status] : null;
+              const statusLabel = game.statuses.find((o) => o.key === status)?.label;
+              const done = status === "done";
+
+              // 조각: 모두 보물 지도. 옅게 깔려 있다가 성공하면 진하게 (출발은 처음부터, 도착은 15칸 모두 성공하면)
+              // 보류·재도전 = 파스텔 색 위에 옅은 지도
+              const vivid = i === 0 || done || (i === GOAL && doneCount === GOAL - 1);
+              const face = statusLook && !done ? cn(statusLook.tile, statusLook.ink) : "bg-card text-foreground";
+
+              /** 그림에서 이 조각 자리만 보이게 (cqw·cqh = 이 조각의 너비·높이, 한 자리 너비 = 100cqw / w) */
+              const slice = (left: string, top: string) => (
+                <span
+                  aria-hidden
+                  className={cn(
+                    "pointer-events-none absolute block transition-[opacity,filter] duration-700",
+                    vivid ? "opacity-100 saturate-[1.15]" : "opacity-30 grayscale-[50%]",
+                  )}
+                  style={{ width: `${(COLS * 100) / w}cqw`, height: `${ROWS * 100}cqh`, left, top }}
+                >
+                  <PuzzleArt route={ROUTE} />
+                </span>
+              );
+
+              let content;
+              if (i === 0) {
+                // 출발·도착: 지도 위에 작은 이름표만
+                content = (
+                  <span className="flex items-center gap-1 rounded-full border-2 border-card bg-pink px-2 py-0.5 font-display text-xs text-card shadow-pop-sm sm:px-3 sm:text-base">
+                    <Flag className="size-3 sm:size-4" />
+                    {game.startLabel}
+                  </span>
+                );
+              } else if (i === GOAL) {
+                content = (
+                  <span className="flex items-center gap-1 rounded-full border-2 border-card bg-primary px-2 py-0.5 font-display text-xs text-primary-foreground shadow-pop-sm sm:px-3 sm:text-base">
+                    <PartyPopper className="size-3 sm:size-4" />
+                    {game.goalLabel}
+                  </span>
+                );
+              } else if (statusLook && !done) {
+                // 보류·재도전: 숫자 자리에 큰 도장
+                content = (
+                  <span
+                    key={status}
+                    className="relative flex aspect-square w-[46%] -rotate-12 items-center justify-center rounded-full border-4 border-card bg-card shadow-pop-sm animate-in zoom-in-50 spin-in-12 duration-500"
+                  >
+                    <statusLook.Icon className={cn("size-3/5", statusLook.text)} strokeWidth={3.5} />
+                    <span className="absolute -bottom-1.5 -right-2 rounded-full border-2 border-card bg-foreground px-1 font-display text-[9px] text-card sm:text-xs">
+                      {i}
+                    </span>
+                  </span>
+                );
+              } else {
+                content = (
+                  <span
+                    className={cn(
+                      "flex items-center justify-center rounded-full font-display",
+                      done
+                        ? "size-6 bg-card/90 text-xs text-foreground shadow-pop-sm sm:size-8 sm:text-base"
+                        : mission
+                          ? cn("size-7 text-sm text-card sm:size-10 sm:text-xl", numberColors[i % numberColors.length])
+                          : "size-8 bg-card/85 text-lg text-foreground/80 sm:size-11 sm:text-2xl",
+                    )}
+                  >
+                    {i}
+                  </span>
+                );
+              }
+
+              const knob = "pointer-events-none absolute z-10 overflow-hidden rounded-full border-2 border-primary/30";
+
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => place(i)}
+                  aria-pressed={here}
+                  aria-label={`${i === 0 ? game.startLabel : i === GOAL ? game.goalLabel : `${i}번 칸`}${mission ? ` ${mission.text}` : ""}${statusLabel ? ` (${statusLabel})` : ""}에 캐릭터 놓기`}
+                  className="group/tile absolute outline-none"
+                  style={{
+                    left: `${(col / COLS) * 100}%`,
+                    top: `${(row / ROWS) * 100}%`,
+                    width: `${(w / COLS) * 100}%`,
+                    height: `${100 / ROWS}%`,
+                    containerType: "size",
+                  }}
+                >
+                  {/* 조각 면 */}
+                  <span
+                    className={cn(
+                      "absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden border-2 border-primary/30 transition-[filter,background-color] duration-500 group-hover/tile:brightness-105 group-focus-visible/tile:ring-4 group-focus-visible/tile:ring-inset group-focus-visible/tile:ring-ring",
+                      face,
+                      here && "ring-4 ring-inset ring-primary/50",
+                    )}
+                  >
+                    {slice(`${(-col * 100) / w}cqw`, `${-row * 100}cqh`)}
+                    {done ? (
+                      // 성공한 조각: 그림 위에 작은 체크 도장
+                      <span className="absolute left-1 top-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-card text-red-deep shadow-pop-sm animate-in zoom-in-50 duration-500 sm:size-7">
+                        <Check className="size-3 sm:size-4" strokeWidth={3.5} />
+                      </span>
+                    ) : null}
+                    <span className="relative flex flex-col items-center gap-1">
+                      {content}
+                      {mission ? (
+                        <span
+                          className={cn(
+                            "hidden px-1 text-center font-display text-sm leading-tight sm:block lg:text-base",
+                            "rounded-full bg-card/90 px-2 py-0.5",
+                          )}
+                        >
+                          {mission.text}
+                        </span>
+                      ) : null}
+                      {statusLabel && !done ? (
+                        <span className="font-display text-[10px] leading-none sm:hidden">{statusLabel}</span>
+                      ) : null}
+                    </span>
+                  </span>
+
+                  {/* 퍼즐 볼록 이음새 (오른쪽, 아래) — 조각과 같은 색, 성공하면 그림도 이어짐 */}
+                  {col + w < COLS ? (
+                    <span
+                      aria-hidden
+                      className={cn(knob, face)}
+                      style={{ width: "26cqmin", height: "26cqmin", right: "-13cqmin", top: "calc(50cqh - 13cqmin)" }}
+                    >
+                      {slice(`calc(${(-col * 100) / w}cqw - 100cqw + 13cqmin)`, `calc(${-row * 100}cqh - 50cqh + 13cqmin)`)}
+                    </span>
+                  ) : null}
+                  {row < ROWS - 1 ? (
+                    <span
+                      aria-hidden
+                      className={cn(knob, face)}
+                      style={{ width: "26cqmin", height: "26cqmin", bottom: "-13cqmin", left: "calc(50cqw - 13cqmin)" }}
+                    >
+                      {slice(`calc(${(-col * 100) / w}cqw - 50cqw + 13cqmin)`, `calc(${-row * 100}cqh - 100cqh + 13cqmin)`)}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 결과를 표시한 칸에서 팡팡: 성공 = 폭죽 + 최고야!, 보류 = 화이팅!, 재도전 = 다시 해보자! */}
+          {burst && burstPlace ? (
+            <div
+              className="pointer-events-none absolute z-30"
+              style={{
+                left: `${(burstPlace.col / COLS) * 100}%`,
+                top: `${(burstPlace.row / ROWS) * 100}%`,
+                width: `${(burstPlace.w / COLS) * 100}%`,
+                height: `${100 / ROWS}%`,
+              }}
+            >
+              {burst.kind === "done" ? <Celebration key={`c-${burst.key}`} className="-inset-x-16 -inset-y-12" /> : null}
+              <StatusBurst
+                key={`s-${burst.key}`}
+                kind={burst.kind}
+                text={game.statuses.find((o) => o.key === burst.kind)?.cheer ?? ""}
+              />
+            </div>
+          ) : null}
 
           {/* 내 캐릭터 말 (칸 사이를 미끄러지듯 이동하고, 도착하면 폴짝) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute z-20 w-[14%] -translate-x-1/2 sm:w-[9%] -translate-y-[108%] transition-all duration-500 ease-out"
+            className="pointer-events-none absolute z-20 w-[14%] -translate-x-1/2 -translate-y-[92%] transition-all duration-500 ease-out sm:w-[9%]"
             style={{ left: `${token.x / 5}%`, top: `${token.y / 4}%` }}
           >
             <div key={hop} className="animate-in fade-in zoom-in-75 slide-in-from-bottom-4 duration-500">
-              <CharacterPiece />
+              <Buddy tone="primary" />
             </div>
           </div>
         </div>
@@ -353,34 +429,6 @@ export function ActionGame() {
             </Button>
           ) : null}
         </div>
-
-        {/* 캐릭터가 있는 칸에 결과 표시 고르기 */}
-        {canMark ? (
-          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl border-4 border-card bg-card/70 px-4 py-3">
-            <span className="mr-1 font-display text-sm text-foreground">
-              {pos}번 칸 {game.statusPrompt}
-            </span>
-            {game.statuses.map((option) => {
-              const look = statusLooks[option.key];
-              const active = statuses[pos] === option.key;
-              return (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => mark(option.key)}
-                  aria-pressed={active}
-                  className={cn(
-                    "flex items-center gap-1 rounded-full border-4 border-card px-3 py-1 font-display text-sm shadow-pop-sm transition-transform hover:-translate-y-0.5",
-                    active ? cn(look?.color, "text-card") : "bg-card text-foreground",
-                  )}
-                >
-                  {look ? <look.Icon className="size-4" strokeWidth={3} /> : null}
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { getItems } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/layout/section-header";
+import { Reveal } from "@/components/ui/reveal";
 
 /* 단계 섹션 (생각 → 계획 → 실천 → 결과) 하나.
    - 글자: site.config.ts 의 steps
@@ -33,9 +34,22 @@ export async function StepSection({
   const items = showCards ? await getItems(step.key) : [];
 
   return (
-    <section id={step.key} className={cn("scroll-mt-16 py-24", index % 2 === 0 && "bg-muted/50")}>
+    <section
+      id={step.key}
+      className={cn(
+        "relative isolate scroll-mt-24 overflow-hidden py-24 sm:py-28",
+        index % 2 === 0 && "bg-linear-to-b from-transparent via-muted/60 to-transparent",
+      )}
+    >
+      {/* 배경의 커다란 옅은 단계 번호 */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-6 right-[-2%] -z-10 select-none font-display text-[11rem] leading-none text-primary/[0.06] sm:text-[16rem]"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </span>
       <Container>
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+        <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-start">
           <div
             aria-hidden
             className={cn(
@@ -46,15 +60,15 @@ export async function StepSection({
             {String(index + 1).padStart(2, "0")}
           </div>
           <SectionHeader eyebrow={step.eyebrow} title={step.title} description={step.description} />
-        </div>
+        </Reveal>
 
-        {children}
+        {children ? <Reveal delay={120}>{children}</Reveal> : null}
 
         {items.length > 0 ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => {
               const card = (
-                <article className="group h-full overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg">
+                <article className="lift group h-full overflow-hidden rounded-[1.75rem] border-4 border-card bg-card shadow-pop-sm">
                   <div className="relative aspect-[4/3] bg-muted">
                     {item.image_url ? (
                       <Image
@@ -71,7 +85,7 @@ export async function StepSection({
                     )}
                   </div>
                   <div className="p-6">
-                    <h3 className="flex items-center justify-between gap-2 text-lg font-semibold">
+                    <h3 className="flex items-center justify-between gap-2 text-lg">
                       {item.title}
                       {item.link_url ? (
                         <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

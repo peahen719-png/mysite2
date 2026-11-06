@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 
 import { siteConfig } from "@/site.config";
 import { getHeroTexts } from "@/lib/data";
@@ -30,6 +30,10 @@ const signStyles = [
   { color: "bg-pink", rotate: "rotate-2", side: "self-end", shape: "polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%)" },
 ];
 
+/* 처음 열 때 차례로 떠오르는 순서 (ms) */
+const enter = (delay: number) => ({ animationDelay: `${delay}ms` });
+const enterClass = "animate-enter motion-reduce:animate-none";
+
 /* 흐릿한 흰 구름 */
 const clouds = [
   "left-[-6%] top-[10%] h-32 w-72",
@@ -47,31 +51,72 @@ export async function Hero() {
       id="top"
       className="relative isolate overflow-hidden bg-linear-to-b from-secondary via-background to-background"
     >
-      {/* 흐릿한 구름 (떠다니는 응원 친구들은 components/layout/cheer-buddies.tsx) */}
+      {/* 흐릿한 구름 */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         {clouds.map((pos) => (
-          <div key={pos} className={cn("absolute rounded-full bg-card/80 blur-2xl", pos)} />
+          <div key={pos} className={cn("absolute animate-float rounded-full bg-card/80 blur-2xl motion-reduce:animate-none", pos)} />
         ))}
       </div>
+
+      {/* 옅은 배경 그림: 왼쪽 아래에서 오른쪽 위 깃발(목표)까지 이어지는 길과, 그 길을 따라 날아가는 종이비행기 */}
+      <svg
+        aria-hidden
+        viewBox="0 0 1200 700"
+        preserveAspectRatio="xMidYMid slice"
+        className="pointer-events-none absolute inset-0 -z-10 size-full opacity-40"
+      >
+        {/* 먼 산 */}
+        <path d="M760 700 L960 420 L1080 540 L1200 380 L1200 700 Z" className="fill-primary/15" />
+        <path d="M880 700 L1040 500 L1200 640 L1200 700 Z" className="fill-sky/20" />
+        {/* 목표로 가는 길 (점선이 앞으로 흘러감) */}
+        <path
+          id="hero-journey"
+          d="M-20 660 C 200 600, 260 470, 430 470 S 650 530, 770 400 S 920 210, 1060 150"
+          fill="none"
+          className="stroke-primary"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeDasharray="2 22"
+        >
+          <animate attributeName="stroke-dashoffset" from="48" to="0" dur="1.6s" repeatCount="indefinite" />
+        </path>
+        {/* 깃발 + 반짝 */}
+        <line x1="1060" y1="150" x2="1060" y2="70" className="stroke-foreground/60" strokeWidth="5" strokeLinecap="round" />
+        <path d="M1060 72 L1120 92 L1060 112 Z" className="fill-pink" />
+        <path d="M1130 40 l8 18 18 8 -18 8 -8 18 -8 -18 -18 -8 18 -8 Z" className="fill-orange" />
+        {/* 길을 따라 날아가는 종이비행기 */}
+        <g className="motion-reduce:hidden">
+          <path d="M-18 -10 L22 0 L-18 10 L-10 0 Z" className="fill-primary" />
+          <animateMotion dur="10s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#hero-journey" />
+          </animateMotion>
+        </g>
+      </svg>
 
       <Container className="grid min-h-[90svh] items-center gap-10 py-20 lg:grid-cols-[1.1fr_1fr]">
         {/* 왼쪽 글자 */}
         <div className="flex flex-col items-start">
           {/* 분홍 스티커 라벨 */}
-          <p className="origin-left -rotate-3 animate-breathe rounded-full border-4 border-card bg-pink motion-reduce:animate-none px-5 py-1.5 font-display text-lg text-pink-foreground shadow-pop-sm">
-            {texts.eyebrow}
-          </p>
-          <h1 className="mt-6 max-w-2xl whitespace-pre-line font-display text-5xl leading-[1.15] text-primary [text-shadow:0_4px_0_var(--card),0_14px_28px_color-mix(in_oklab,var(--primary)_35%,transparent)] sm:text-6xl lg:text-7xl">
+          <div className={enterClass} style={enter(0)}>
+            <p className="origin-left -rotate-3 animate-breathe rounded-full border-4 border-card bg-pink motion-reduce:animate-none px-5 py-1.5 font-display text-lg text-pink-foreground shadow-pop-sm">
+              {texts.eyebrow}
+            </p>
+          </div>
+          <h1
+            style={enter(120)}
+            className="mt-6 animate-enter motion-reduce:animate-none max-w-2xl whitespace-pre-line font-display text-5xl leading-[1.15] text-primary [text-shadow:0_4px_0_var(--card),0_14px_28px_color-mix(in_oklab,var(--primary)_35%,transparent)] sm:text-6xl lg:text-7xl">
             {texts.title}
           </h1>
           {/* 설명은 한 글자씩 타이핑되듯 나타남 */}
-          <TypewriterText
-            loop
-            key={texts.description}
-            text={texts.description}
-            className="mt-6 min-h-[1.7em] max-w-md text-lg font-medium leading-relaxed text-muted-foreground"
-          />
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className={enterClass} style={enter(260)}>
+            <TypewriterText
+              loop
+              key={texts.description}
+              text={texts.description}
+              className="mt-6 min-h-[1.7em] max-w-md text-lg font-medium leading-relaxed text-muted-foreground"
+            />
+          </div>
+          <div className={cn("mt-10 flex flex-wrap gap-4", enterClass)} style={enter(380)}>
             <Button asChild size="lg">
               <a href={hero.primaryCta.href}>
                 {texts.primaryCtaLabel}
@@ -85,7 +130,7 @@ export async function Hero() {
         </div>
 
         {/* 오른쪽 이정표 */}
-        <div className="relative mx-auto h-[600px] w-full max-w-md">
+        <div className={cn("relative mx-auto h-[600px] w-full max-w-md", enterClass)} style={enter(220)}>
           {/* 기둥 */}
           <div
             aria-hidden
@@ -156,6 +201,18 @@ export async function Hero() {
           </nav>
         </div>
       </Container>
+
+      {/* 아래로 내려 보라는 표시 */}
+      <a
+        href={`#${steps[0]?.key ?? "think"}`}
+        aria-label="아래로 내려가기"
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 font-display text-xs tracking-[0.3em] text-muted-foreground transition-colors hover:text-primary lg:flex"
+      >
+        SCROLL
+        <span className="flex size-9 animate-bounce items-center justify-center rounded-full border-2 border-card bg-card/80 shadow-pop-sm motion-reduce:animate-none">
+          <ChevronDown className="size-4" />
+        </span>
+      </a>
     </section>
   );
 }
